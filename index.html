@@ -48,16 +48,16 @@
         <a href="#temoignages">Témoignages</a>
         <a href="#pratique">Pratique</a>
         <a class="engagement-link" href="#engagement">Je m’engage</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Activer le mode sombre">
+          <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"></path>
+          </svg>
+          <span id="theme-toggle-label">Mode sombre</span>
+        </button>
       </nav>
     </div>
     <div class="header-highlight">
       <span>Avec l’Apôtre Germain Ndeke</span>
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Activer le mode sombre">
-        <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"></path>
-        </svg>
-        <span id="theme-toggle-label">Mode sombre</span>
-      </button>
       <span class="theme-status" id="theme-status" role="status" aria-live="polite"></span>
     </div>
   </header>
@@ -477,6 +477,40 @@
       </div>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a class="brand" href="#accueil" aria-label="Grande Offensive, retour à l’accueil">
+          <img src="./img/logo.png" alt="" width="90" height="76" loading="lazy">
+          <span class="brand-copy">
+            <span class="brand-name">Grande Offensive</span>
+            <span class="brand-edition">31e édition · 2026</span>
+          </span>
+        </a>
+        <p>« Le pouvoir de la Parole » · Matthieu 12:37</p>
+        <p>Du 15 novembre au 5 décembre 2026</p>
+        <p>Avec l’Apôtre Germain Ndeke</p>
+      </div>
+
+      <nav class="footer-navigation" aria-label="Navigation de pied de page">
+        <a href="#comprendre">Comprendre l’Offensive</a>
+        <a href="#livret">Thème et livret</a>
+        <a href="#conseils">Conseils de jeûne</a>
+        <a href="#engagement">Je m’engage</a>
+        <a href="#medias">Médias</a>
+        <a href="#assemblees">Trouver une assemblée</a>
+        <a href="#kit">Kit à télécharger</a>
+        <a href="#temoignages">Témoignages</a>
+        <a href="#pratique">Contact et FAQ</a>
+      </nav>
+
+      <div class="footer-bottom">
+        <span>Grande Offensive · 2026</span>
+        <a href="#accueil">Retour en haut ↑</a>
+      </div>
+    </div>
+  </footer>
 
   <script>
     const menuToggle = document.querySelector(".menu-toggle");

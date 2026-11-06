@@ -50,11 +50,11 @@ a {
 
 .header-inner {
   display: flex;
-  width: min(100% - 40px, 1440px);
+  width: min(100% - 32px, 1440px);
   min-height: 70px;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 10px 20px;
   margin: 0 auto;
 }
 
@@ -94,9 +94,11 @@ a {
 
 .primary-navigation {
   display: flex;
+  flex: 1 1 760px;
   align-items: center;
   justify-content: flex-end;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 4px clamp(5px, 0.65vw, 10px);
 }
 
 .primary-navigation a {
@@ -161,23 +163,89 @@ button:focus-visible {
 
 .theme-toggle {
   display: inline-flex;
-  min-height: 36px;
+  min-height: 34px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 5px 12px;
+  gap: 6px;
+  padding: 4px 8px;
   border: 1px solid rgb(255 255 255 / 55%);
   border-radius: 999px;
   background: transparent;
   color: #fff;
   font: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .theme-toggle:hover {
   background: rgb(255 255 255 / 12%);
+}
+
+.primary-navigation .theme-toggle {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.theme-status:empty {
+  display: none;
+}
+
+.site-footer {
+  padding: 48px 20px 20px;
+  background: #101943;
+  color: #e7ecf6;
+}
+
+.footer-container {
+  display: grid;
+  width: min(100%, 1120px);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 32px 48px;
+  margin: 0 auto;
+}
+
+.footer-brand .brand {
+  margin-bottom: 16px;
+}
+
+.footer-brand > p {
+  margin: 7px 0 0;
+  color: #c3ccdd;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.footer-navigation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 8px 20px;
+}
+
+.footer-navigation a,
+.footer-bottom a {
+  color: #e7ecf6;
+  font-size: 14px;
+  line-height: 1.5;
+  text-decoration-color: rgb(243 200 75 / 70%);
+  text-underline-offset: 4px;
+}
+
+.footer-navigation a:hover,
+.footer-bottom a:hover {
+  color: #ffe08a;
+}
+
+.footer-bottom {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(255 255 255 / 18%);
+  color: #c3ccdd;
+  font-size: 13px;
 }
 
 .theme-icon {
@@ -1550,6 +1618,7 @@ button:focus-visible {
   }
 
   .menu-icon {
+    position: relative;
     display: grid;
     gap: 4px;
   }
@@ -1559,19 +1628,47 @@ button:focus-visible {
     width: 17px;
     height: 2px;
     background: currentColor;
+    transform-origin: center;
+    transition: transform 220ms ease, opacity 180ms ease;
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-icon span:first-child {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-icon span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-icon span:last-child {
+    transform: translateY(-6px) rotate(-45deg);
   }
 
   .primary-navigation {
-    display: none;
+    display: flex;
     flex: 1 0 100%;
     align-items: stretch;
     flex-direction: column;
+    flex-wrap: nowrap;
     gap: 2px;
-    padding: 8px 0 0;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    visibility: hidden;
+    transition: max-height 320ms ease, opacity 200ms ease, transform 220ms ease, padding 220ms ease, visibility 0s linear 320ms;
   }
 
   .primary-navigation.is-open {
-    display: flex;
+    max-height: 720px;
+    padding: 8px 0 0;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+    transition: max-height 320ms ease, opacity 200ms ease, transform 220ms ease, padding 220ms ease, visibility 0s;
   }
 
   .primary-navigation a {
@@ -1579,6 +1676,12 @@ button:focus-visible {
     padding: 0 12px;
     border-radius: 4px;
     white-space: normal;
+  }
+
+  .primary-navigation .theme-toggle {
+    align-self: flex-start;
+    margin: 8px 12px;
+    max-width: calc(100% - 24px);
   }
 
   .primary-navigation a:hover,
@@ -1589,6 +1692,21 @@ button:focus-visible {
   .primary-navigation .engagement-link {
     justify-content: center;
     margin-top: 6px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .footer-navigation {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .footer-bottom {
+    grid-column: auto;
   }
 }
 
@@ -1612,6 +1730,15 @@ button:focus-visible {
 
   .welcome {
     padding: 56px 20px;
+  }
+
+  .header-inner {
+    column-gap: 8px;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
@@ -1716,6 +1843,11 @@ button:focus-visible {
 
   .booklet-mockup {
     animation: none;
+  }
+
+  .menu-icon span,
+  .primary-navigation {
+    transition: none;
   }
 }
 

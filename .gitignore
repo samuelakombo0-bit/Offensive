@@ -1,0 +1,11 @@
+# Fichiers d'instructions locaux
+/AGENTS.md
+
+# Parametres locaux de VS Code
+/.vscode/settings.json
+
+# Fichiers generes par le systeme d'exploitation
+.DS_Store
+Thumbs.db
+Desktop.ini
+affiche-offensive.-2026.png
