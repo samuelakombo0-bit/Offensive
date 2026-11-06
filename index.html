@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2146b3">
+  <meta name="description" content="31e Grande Offensive de jeûne et prière : Le pouvoir de la Parole, du 15 novembre au 5 décembre 2026.">
+  <title>Grande Offensive de jeûne et prière 2026</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("offensive-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.dataset.theme = savedTheme === "light" || savedTheme === "dark"
+        ? savedTheme
+        : (prefersDark ? "dark" : "light");
+    } catch (error) {
+      document.documentElement.dataset.theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      window.themePreferenceError = error.message;
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Aller au contenu</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#accueil" aria-label="Grande Offensive, accueil">
+        <img src="./img/logo.png" alt="" width="90" height="76">
+        <span class="brand-copy">
+          <span class="brand-name">Grande Offensive</span>
+          <span class="brand-edition">31e édition · 2026</span>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="menu-label">Menu</span>
+      </button>
+
+      <nav class="primary-navigation" id="primary-navigation" aria-label="Navigation principale">
+        <a href="#accueil">Accueil</a>
+        <a href="#comprendre">L’Offensive</a>
+        <a href="#livret">Thème &amp; livret</a>
+        <a href="#conseils">Conseils</a>
+        <a href="#medias">Médias</a>
+        <a href="#assemblees">Assemblées</a>
+        <a href="#kit">Kit</a>
+        <a href="#temoignages">Témoignages</a>
+        <a href="#pratique">Pratique</a>
+        <a class="engagement-link" href="#engagement">Je m’engage</a>
+      </nav>
+    </div>
+    <div class="header-highlight">
+      <span>Avec l’Apôtre Germain Ndeke</span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Activer le mode sombre">
+        <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"></path>
+        </svg>
+        <span id="theme-toggle-label">Mode sombre</span>
+      </button>
+      <span class="theme-status" id="theme-status" role="status" aria-live="polite"></span>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="welcome" id="accueil" aria-labelledby="page-title">
+      <p class="welcome-kicker">31e édition · Offensive de jeûne et prière</p>
+      <h1 id="page-title">Le pouvoir<br>de la Parole</h1>
+      <p class="welcome-verse">Matthieu 12:37</p>
+      <div class="welcome-countdown" id="launch-countdown" role="timer" aria-label="Compte à rebours avant le lancement">
+        <span><strong data-countdown-days>--</strong><small>Jours</small></span>
+        <span><strong data-countdown-hours>--</strong><small>Heures</small></span>
+        <span><strong data-countdown-minutes>--</strong><small>Minutes</small></span>
+        <span><strong data-countdown-seconds>--</strong><small>Secondes</small></span>
+      </div>
+      <p class="welcome-dates">Du dimanche <strong>15 novembre</strong><br>au samedi <strong>5 décembre 2026</strong></p>
+    </section>
+
+    <section class="about-section" id="comprendre" aria-labelledby="about-title">
+      <div class="about-container">
+        <header class="about-heading">
+          <p class="about-eyebrow">La Grande Offensive</p>
+          <h2 id="about-title">Comprendre l’Offensive</h2>
+          <p>
+            La Grande Offensive est un temps de jeûne et de prière. Sa 31e édition se déroule
+            du 15 novembre au 5 décembre 2026, autour du thème « Le pouvoir de la Parole »
+            (Matthieu 12:37).
+          </p>
+        </header>
+
+        <div class="about-details">
+            <article class="about-card">
+              <span class="about-card-number" aria-hidden="true">01</span>
+              <h3>30 ans d’Offensive</h3>
+              <p>Cette 31e édition s’inscrit dans 30 ans de Grande Offensive.</p>
+            </article>
+
+            <article class="about-card about-open-card">
+              <span class="about-card-number" aria-hidden="true">02</span>
+              <h3>Ouverte à tous</h3>
+              <p>Vous pouvez participer, que vous soyez membre d’une assemblée ou non.</p>
+            </article>
+
+            <article class="vision-card">
+              <p>Notre vision</p>
+              <h3>« Implanter les églises »</h3>
+            </article>
+
+            <article class="president-message">
+              <div>
+                <p class="message-label">Message du Président du Conseil</p>
+                <h3>Un message officiel sera publié ici.</h3>
+                <p>Le texte ou la vidéo sera ajouté dès qu’il sera disponible.</p>
+              </div>
+              <img src="./img/2.jpg" alt="Apôtre Germain Ndeke s’adressant à l’assemblée" width="1600" height="1067" loading="lazy" decoding="async">
+            </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="booklet-section" id="livret" aria-labelledby="booklet-title">
+      <div class="booklet-container">
+        <header class="booklet-heading">
+          <p class="about-eyebrow">31e édition · 21 jours</p>
+          <h2 id="booklet-title">Le thème et le livret</h2>
+          <p>Un parcours autour du thème « Le pouvoir de la Parole » (Matthieu 12:37).</p>
+        </header>
+
+        <div class="booklet-intro">
+          <div class="booklet-stage">
+            <div class="booklet-mockup" role="img" aria-label="Aperçu visuel non officiel du livret, avec le thème Le pouvoir de la Parole et la référence Matthieu 12:37">
+              <div class="booklet-spine" aria-hidden="true"></div>
+              <div class="booklet-cover">
+                <span class="booklet-cover-edition">31e GRANDE OFFENSIVE</span>
+                <span class="booklet-cover-title">Le pouvoir<br>de la Parole</span>
+                <span class="booklet-cover-verse">Matthieu 12:37</span>
+                <span class="booklet-cover-note">Aperçu visuel · couverture officielle à venir</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="booklet-availability">
+            <p class="about-eyebrow">Le livret</p>
+            <h3>Disponibilité à confirmer</h3>
+            <p>Les informations pour acheter ou télécharger le livret seront ajoutées dès qu’elles seront communiquées.</p>
+          </aside>
+        </div>
+
+        <div class="devotional-heading">
+          <h3>Les 21 jours</h3>
+          <p>Les pensées et références bibliques officielles seront publiées ici.</p>
+        </div>
+
+        <div class="week-grid">
+          <article class="week-card">
+            <p class="week-label">Jours 1 à 7</p>
+            <h4>Semaine 1</h4>
+            <p class="week-theme">Thème hebdomadaire à confirmer</p>
+            <ol class="daily-readings" aria-label="Pensées ou versets de la semaine 1">
+              <li><span>Jour 1</span><span>À publier</span></li>
+              <li><span>Jour 2</span><span>À publier</span></li>
+              <li><span>Jour 3</span><span>À publier</span></li>
+              <li><span>Jour 4</span><span>À publier</span></li>
+              <li><span>Jour 5</span><span>À publier</span></li>
+              <li><span>Jour 6</span><span>À publier</span></li>
+              <li><span>Jour 7</span><span>À publier</span></li>
+            </ol>
+          </article>
+
+          <article class="week-card">
+            <p class="week-label">Jours 8 à 14</p>
+            <h4>Semaine 2</h4>
+            <p class="week-theme">Thème hebdomadaire à confirmer</p>
+            <ol class="daily-readings" aria-label="Pensées ou versets de la semaine 2" start="8">
+              <li><span>Jour 8</span><span>À publier</span></li>
+              <li><span>Jour 9</span><span>À publier</span></li>
+              <li><span>Jour 10</span><span>À publier</span></li>
+              <li><span>Jour 11</span><span>À publier</span></li>
+              <li><span>Jour 12</span><span>À publier</span></li>
+              <li><span>Jour 13</span><span>À publier</span></li>
+              <li><span>Jour 14</span><span>À publier</span></li>
+            </ol>
+          </article>
+
+          <article class="week-card">
+            <p class="week-label">Jours 15 à 21</p>
+            <h4>Semaine 3</h4>
+            <p class="week-theme">Thème hebdomadaire à confirmer</p>
+            <ol class="daily-readings" aria-label="Pensées ou versets de la semaine 3" start="15">
+              <li><span>Jour 15</span><span>À publier</span></li>
+              <li><span>Jour 16</span><span>À publier</span></li>
+              <li><span>Jour 17</span><span>À publier</span></li>
+              <li><span>Jour 18</span><span>À publier</span></li>
+              <li><span>Jour 19</span><span>À publier</span></li>
+              <li><span>Jour 20</span><span>À publier</span></li>
+              <li><span>Jour 21</span><span>À publier</span></li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="fasting-section" id="conseils" aria-labelledby="fasting-title">
+      <div class="fasting-container">
+        <header class="fasting-heading">
+          <p class="about-eyebrow">Se préparer à l’Offensive</p>
+          <h2 id="fasting-title">Conseils de jeûne</h2>
+          <p>Des repères spirituels et des informations santé seront réunis ici pour accompagner les participants.</p>
+        </header>
+
+        <div class="fasting-grid">
+          <article class="fasting-card">
+            <span class="fasting-card-index" aria-hidden="true">01</span>
+            <h3>Préparation spirituelle</h3>
+            <p>Les contenus officiels sur la préparation spirituelle seront ajoutés ici.</p>
+            <ul>
+              <li>Attitude</li>
+              <li>Prière</li>
+              <li>Lecture</li>
+            </ul>
+          </article>
+
+          <article class="fasting-card fasting-health-card">
+            <span class="fasting-card-index" aria-hidden="true">02</span>
+            <h3>Santé et précautions</h3>
+            <p>Les informations sur l’alimentation et les précautions seront publiées après validation médicale.</p>
+            <p class="medical-validation">Validation attendue : Dr Brice et les autres médecins mentionnés dans le cahier des charges.</p>
+          </article>
+
+          <article class="fasting-card">
+            <span class="fasting-card-index" aria-hidden="true">03</span>
+            <h3>Situations particulières</h3>
+            <p>Des informations adaptées à ces situations seront ajoutées après validation.</p>
+            <ul>
+              <li>Personnes malades</li>
+              <li>Enfants</li>
+              <li>Femmes enceintes</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="engagement-section" id="engagement" aria-labelledby="engagement-title">
+      <div class="engagement-container">
+        <header class="engagement-heading">
+          <p class="about-eyebrow">Le cœur de l’Offensive</p>
+          <h2 id="engagement-title">Je m’engage</h2>
+          <p>Indiquez vos informations pour créer un visuel à partager. Elles restent dans votre navigateur et ne sont pas envoyées.</p>
+        </header>
+
+        <div class="engagement-grid">
+          <form class="engagement-form" id="engagement-form">
+            <label for="participant-name">Prénom</label>
+            <input id="participant-name" name="name" type="text" autocomplete="given-name" maxlength="60" required>
+
+            <label for="participant-location">Assemblée ou ville</label>
+            <input id="participant-location" name="location" type="text" autocomplete="address-level2" maxlength="80" required>
+
+            <label for="fasting-duration">Durée choisie (en jours)</label>
+            <input id="fasting-duration" name="duration" type="number" min="1" max="21" step="1" inputmode="numeric" required aria-describedby="duration-help">
+            <small id="duration-help">Choisissez une durée de 1 à 21 jours.</small>
+
+            <label for="prayer-subject">Sujet de prière (facultatif)</label>
+            <textarea id="prayer-subject" name="prayer" rows="3" maxlength="300"></textarea>
+            <small>Ce sujet n’apparaît pas sur le visuel partagé.</small>
+
+            <button class="engagement-submit" type="submit">Créer mon visuel</button>
+            <p class="form-status" id="engagement-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="engagement-result" id="engagement-result" hidden>
+            <h3>Votre visuel est prêt</h3>
+            <canvas id="engagement-canvas" width="1080" height="1350" role="img" aria-label="Visuel personnalisé de participation à la Grande Offensive"></canvas>
+            <div class="engagement-actions">
+              <a class="engagement-action" id="download-card" download="mon-engagement-offensive.png">Télécharger le visuel</a>
+              <a class="engagement-action engagement-share" id="share-card" target="_blank" rel="noopener noreferrer">Partager sur WhatsApp</a>
+            </div>
+          </div>
+        </div>
+
+        <section class="public-counter" aria-labelledby="counter-title">
+          <div>
+            <h3 id="counter-title">Engagements mobilisés</h3>
+            <p>Les chiffres publics seront affichés après la mise en place d’un système de collecte.</p>
+          </div>
+          <p class="counter-values"><span>— <small>engagés</small></span><span>— <small>assemblées</small></span></p>
+        </section>
+
+        <section class="daily-checkin" aria-labelledby="checkin-title">
+          <div class="daily-checkin-heading">
+            <h3 id="checkin-title">Mon suivi des 21 jours</h3>
+            <p>Votre suivi est enregistré uniquement sur cet appareil.</p>
+          </div>
+          <div class="checkin-progress" aria-live="polite" id="checkin-progress">0 jour coché sur 21</div>
+          <div class="checkin-grid" id="checkin-grid"></div>
+          <p class="checkin-status" id="checkin-status" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+    </section>
+
+    <section class="media-section" id="medias" aria-labelledby="media-title">
+      <div class="media-container">
+        <header class="media-heading">
+          <p class="about-eyebrow">À voir et à écouter</p>
+          <h2 id="media-title">Les contenus de l’Offensive</h2>
+          <p>Les publications officielles seront ajoutées ici dès qu’elles seront disponibles.</p>
+        </header>
+
+        <div class="media-grid">
+          <article class="media-card">
+            <span class="media-card-type">Spot officiel</span>
+            <h3>Le spot de la 31e édition</h3>
+            <p>La vidéo officielle sera publiée ici.</p>
+          </article>
+          <article class="media-card">
+            <span class="media-card-type">Vidéos · podcasts · réels</span>
+            <h3>Voir et écouter</h3>
+            <p>Les vidéos, podcasts et réels officiels seront ajoutés ici.</p>
+          </article>
+          <article class="media-card">
+            <span class="media-card-type">Témoignages · interviews</span>
+            <h3>La parole aux participants</h3>
+            <p>Les témoignages et interviews des ministres et membres, notamment autour des 30 ans de l’Offensive, seront publiés ici.</p>
+          </article>
+          <article class="media-card">
+            <span class="media-card-type">Chaque semaine</span>
+            <h3>Récaps des assemblées</h3>
+            <p>Les récapitulatifs hebdomadaires des assemblées seront ajoutés ici.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="assembly-section" id="assemblees" aria-labelledby="assembly-title">
+      <div class="assembly-container">
+        <header class="assembly-heading">
+          <p class="about-eyebrow">Près de vous</p>
+          <h2 id="assembly-title">Trouver une assemblée</h2>
+          <p>Les informations ci-dessous proviennent des visuels présents dans le projet. La liste complète des assemblées reste à recevoir.</p>
+        </header>
+
+        <label class="assembly-search-label" for="assembly-search">Rechercher une assemblée ou une ville</label>
+        <input class="assembly-search" id="assembly-search" type="search" placeholder="Ex. Matari" autocomplete="off">
+        <p class="assembly-search-status" id="assembly-search-status" role="status" aria-live="polite"></p>
+
+        <div class="assembly-layout">
+          <div class="assembly-list" id="assembly-list">
+            <article class="assembly-card" data-assembly-name="rehoboth matari" data-assembly-location="matari">
+              <p class="assembly-source">Coordonnées visibles sur le visuel de l’Assemblée Matari</p>
+              <h3>Rehoboth · Assemblée Matari</h3>
+              <address>N° 24, rue Ingouna</address>
+              <p><strong>Téléphones :</strong> <a href="tel:+242069838430">+242 06 983 84 30</a> · <a href="tel:+242050448000">05 044 80 00</a></p>
+              <p><strong>Réseaux :</strong> @cmrmatari</p>
+              <p class="assembly-missing">Horaires et référent : à communiquer.</p>
+            </article>
+            <p class="assembly-empty" id="assembly-empty" hidden>Aucune assemblée de la liste actuelle ne correspond à cette recherche.</p>
+          </div>
+
+          <aside class="map-placeholder" aria-labelledby="map-title">
+            <div class="map-placeholder-mark" aria-hidden="true"></div>
+            <h3 id="map-title">Carte interactive à compléter</h3>
+            <p>Les adresses et coordonnées géographiques des assemblées (66 et plus, Dakar, etc.) sont nécessaires avant d’afficher leurs emplacements sur une carte fiable.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="kit-section" id="kit" aria-labelledby="kit-title">
+      <div class="kit-container">
+        <header class="kit-heading">
+          <p class="about-eyebrow">Ressources officielles</p>
+          <h2 id="kit-title">Kit à télécharger</h2>
+          <p>Téléchargez les visuels déjà fournis au projet. D’autres formats seront ajoutés lorsqu’ils seront disponibles.</p>
+        </header>
+
+        <div class="kit-grid">
+          <article class="kit-card">
+            <img src="./affiche-offensive-2026.jpg" alt="Affiche officielle de la 31e Grande Offensive" width="720" height="900" loading="lazy" decoding="async">
+            <div class="kit-card-content">
+              <span class="kit-type">Affiche officielle</span>
+              <h3>Grande Offensive 2026</h3>
+              <a class="kit-download" href="./affiche-offensive-2026.jpg" download="affiche-offensive-2026.jpg">Télécharger l’affiche</a>
+            </div>
+          </article>
+
+          <article class="kit-card">
+            <img src="./img/logo.png" alt="Logo Rehoboth" width="160" height="126" loading="lazy" decoding="async">
+            <div class="kit-card-content">
+              <span class="kit-type">Logo</span>
+              <h3>Logo Rehoboth</h3>
+              <a class="kit-download" href="./img/logo.png" download="logo-rehoboth.png">Télécharger le logo</a>
+            </div>
+          </article>
+
+          <article class="kit-card">
+            <img src="./img/logo.jpeg" alt="Visuel de l’Assemblée Matari avec ses coordonnées" width="1080" height="1080" loading="lazy" decoding="async">
+            <div class="kit-card-content">
+              <span class="kit-type">Visuel d’assemblée</span>
+              <h3>Rehoboth Matari</h3>
+              <a class="kit-download" href="./img/logo.jpeg" download="visuel-rehoboth-matari.jpeg">Télécharger le visuel</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="copy-texts">
+          <div>
+            <p class="kit-type">Texte prêt à partager</p>
+            <h3>Invitez vos proches</h3>
+            <p>Copiez un texte factuel sur la 31e édition, ou partagez-le directement sur WhatsApp.</p>
+          </div>
+          <div class="copy-actions">
+            <button class="copy-button" type="button" data-copy-invitation>Copier le texte d’invitation</button>
+            <a class="kit-download whatsapp-invite" id="kit-whatsapp-invite" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Partager sur WhatsApp</a>
+          </div>
+          <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <p class="kit-pending">Visuels pour statuts WhatsApp, bannières et autres logos : à ajouter lorsqu’ils seront fournis.</p>
+      </div>
+    </section>
+
+    <section class="testimonials-section" id="temoignages" aria-labelledby="testimonials-title">
+      <div class="testimonials-container">
+        <header class="testimonials-heading">
+          <p class="about-eyebrow">Vos récits comptent</p>
+          <h2 id="testimonials-title">Mur de témoignages</h2>
+          <p>Les témoignages écrits, photos et vidéos devront être relus et modérés avant toute publication.</p>
+        </header>
+
+        <div class="testimonials-notice">
+          <h3>Soumissions bientôt disponibles</h3>
+          <p>Aucun formulaire d’envoi n’est activé pour le moment : le site n’a pas de serveur pour recevoir ou modérer les contenus. Le responsable et le canal officiel de soumission restent à confirmer.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="practical-section" id="pratique" aria-labelledby="practical-title">
+      <div class="practical-container">
+        <header class="practical-heading">
+          <p class="about-eyebrow">Informations utiles</p>
+          <h2 id="practical-title">Pratique</h2>
+        </header>
+
+        <div class="practical-grid">
+          <section class="practical-card" aria-labelledby="faq-title">
+            <h3 id="faq-title">Questions fréquentes</h3>
+            <details>
+              <summary>Quand se déroule la 31e Grande Offensive ?</summary>
+              <p>Du 15 novembre au 5 décembre 2026.</p>
+            </details>
+            <details>
+              <summary>Quel est le thème de cette édition ?</summary>
+              <p>« Le pouvoir de la Parole » (Matthieu 12:37).</p>
+            </details>
+            <details>
+              <summary>Qui peut participer ?</summary>
+              <p>L’Offensive est ouverte à tous, membres et non-membres.</p>
+            </details>
+            <details>
+              <summary>Où trouver les informations officielles à jour ?</summary>
+              <p>Le site centralise les informations diffusées par l’organisation. Les liens officiels vers les réseaux et canaux seront ajoutés lorsqu’ils seront confirmés.</p>
+            </details>
+          </section>
+
+          <section class="practical-card practical-contact" aria-labelledby="contact-title">
+            <h3 id="contact-title">Contact et réseaux</h3>
+            <p>Le contact général et les liens officiels de l’Offensive restent à communiquer.</p>
+            <div class="known-contact">
+              <p><strong>Assemblée Matari</strong><br>N° 24, rue Ingouna</p>
+              <p><a href="tel:+242069838430">+242 06 983 84 30</a><br><a href="tel:+242050448000">05 044 80 00</a></p>
+              <p>Réseaux de l’assemblée : @cmrmatari</p>
+            </div>
+            <button class="copy-button" type="button" data-share-invitation>Partager l’invitation</button>
+            <p class="share-status" id="share-status" role="status" aria-live="polite"></p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navigation = document.querySelector(".primary-navigation");
+    const menuLabel = document.querySelector(".menu-label");
+
+    function closeMenu(returnFocus = false) {
+      menuToggle.setAttribute("aria-expanded", "false");
+      navigation.classList.remove("is-open");
+      menuLabel.textContent = "Menu";
+      if (returnFocus) menuToggle.focus();
+    }
+
+    menuToggle.addEventListener("click", () => {
+      const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
+      menuToggle.setAttribute("aria-expanded", String(!isExpanded));
+      navigation.classList.toggle("is-open", !isExpanded);
+      menuLabel.textContent = isExpanded ? "Menu" : "Fermer";
+    });
+
+    navigation.addEventListener("click", (event) => {
+      if (event.target.closest("a")) closeMenu();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && menuToggle.getAttribute("aria-expanded") === "true") {
+        closeMenu(true);
+      }
+    });
+
+    window.matchMedia("(min-width: 68.75rem)").addEventListener("change", (event) => {
+      if (event.matches) closeMenu();
+    });
+
+    const themeToggle = document.querySelector("#theme-toggle");
+    const themeToggleLabel = document.querySelector("#theme-toggle-label");
+    const themeStatus = document.querySelector("#theme-status");
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+    function updateThemeControl() {
+      const isDark = document.documentElement.dataset.theme === "dark";
+      themeToggle.setAttribute("aria-pressed", String(isDark));
+      themeToggle.setAttribute("aria-label", isDark ? "Activer le mode clair" : "Activer le mode sombre");
+      themeToggleLabel.textContent = isDark ? "Mode clair" : "Mode sombre";
+      themeColorMeta.content = isDark ? "#10182b" : "#2146b3";
+    }
+
+    updateThemeControl();
+    if (window.themePreferenceError) {
+      themeStatus.textContent = "Le thème suit votre appareil ; votre préférence ne peut pas être mémorisée dans ce navigateur.";
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      updateThemeControl();
+      themeStatus.textContent = "";
+
+      try {
+        localStorage.setItem("offensive-theme", nextTheme);
+      } catch (error) {
+        themeStatus.textContent = `Le thème est modifié, mais la préférence n’a pas pu être mémorisée : ${error.message}`;
+      }
+    });
+
+    const assemblySearch = document.querySelector("#assembly-search");
+    const assemblyCard = document.querySelector(".assembly-card");
+    const assemblyEmpty = document.querySelector("#assembly-empty");
+    const assemblySearchStatus = document.querySelector("#assembly-search-status");
+
+    assemblySearch.addEventListener("input", () => {
+      const query = assemblySearch.value.trim().toLocaleLowerCase("fr");
+      const searchableText = `${assemblyCard.dataset.assemblyName} ${assemblyCard.dataset.assemblyLocation}`;
+      const isMatch = searchableText.includes(query);
+      assemblyCard.hidden = !isMatch;
+      assemblyEmpty.hidden = isMatch;
+      assemblySearchStatus.textContent = isMatch ? "1 assemblée correspond à la recherche." : "Aucune assemblée trouvée dans la liste disponible.";
+    });
+
+    const invitationText = [
+      "Je vous invite à la 31e Grande Offensive de jeûne et prière.",
+      "Thème : « Le pouvoir de la Parole » (Matthieu 12:37).",
+      "Du 15 novembre au 5 décembre 2026."
+    ];
+    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+      invitationText.push(window.location.href.split("#")[0]);
+    }
+    const invitationMessage = invitationText.join("\n");
+    const copyStatus = document.querySelector("#copy-status");
+    const shareStatus = document.querySelector("#share-status");
+    const kitWhatsappInvite = document.querySelector("#kit-whatsapp-invite");
+
+    kitWhatsappInvite.href = `https://wa.me/?text=${encodeURIComponent(invitationMessage)}`;
+
+    async function copyInvitation() {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(invitationMessage);
+        return;
+      }
+
+      const temporaryField = document.createElement("textarea");
+      temporaryField.value = invitationMessage;
+      temporaryField.setAttribute("readonly", "");
+      temporaryField.style.position = "fixed";
+      temporaryField.style.opacity = "0";
+      document.body.append(temporaryField);
+      temporaryField.select();
+      const copied = document.execCommand("copy");
+      temporaryField.remove();
+      if (!copied) throw new Error("Le navigateur n’a pas autorisé la copie.");
+    }
+
+    document.querySelector("[data-copy-invitation]").addEventListener("click", async () => {
+      copyStatus.textContent = "";
+      try {
+        await copyInvitation();
+        copyStatus.textContent = "Texte d’invitation copié.";
+      } catch (error) {
+        copyStatus.textContent = `Impossible de copier le texte : ${error.message}`;
+      }
+    });
+
+    document.querySelector("[data-share-invitation]").addEventListener("click", () => {
+      shareStatus.textContent = "Ouverture de WhatsApp avec le texte d’invitation. L’adresse du site sera incluse une fois le site publié.";
+      window.open(`https://wa.me/?text=${encodeURIComponent(invitationMessage)}`, "_blank", "noopener,noreferrer");
+    });
+
+    const engagementForm = document.querySelector("#engagement-form");
+    const engagementStatus = document.querySelector("#engagement-status");
+    const engagementResult = document.querySelector("#engagement-result");
+    const engagementCanvas = document.querySelector("#engagement-canvas");
+    const downloadCard = document.querySelector("#download-card");
+    const shareCard = document.querySelector("#share-card");
+    let cardImageUrl = "";
+
+    function drawWrappedText(context, text, x, y, maxWidth, lineHeight) {
+      const lines = [];
+      let line = "";
+
+      for (const word of text.split(/\s+/)) {
+        let remainingWord = word;
+        while (remainingWord && context.measureText(`${line}${line ? " " : ""}${remainingWord}`).width > maxWidth) {
+          if (line) {
+            lines.push(line);
+            line = "";
+          } else {
+            let fittingPart = "";
+            while (remainingWord && context.measureText(remainingWord[0]).width <= maxWidth) {
+              const nextPart = fittingPart + remainingWord[0];
+              if (context.measureText(nextPart).width > maxWidth) break;
+              fittingPart = nextPart;
+              remainingWord = remainingWord.slice(1);
+            }
+            if (!fittingPart) {
+              fittingPart = remainingWord[0];
+              remainingWord = remainingWord.slice(1);
+            }
+            lines.push(fittingPart);
+          }
+        }
+        if (remainingWord) line = line ? `${line} ${remainingWord}` : remainingWord;
+      }
+
+      if (line) lines.push(line);
+      lines.forEach((textLine, index) => context.fillText(textLine, x, y + index * lineHeight));
+      return y + lines.length * lineHeight;
+    }
+
+    engagementForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      engagementStatus.textContent = "";
+      engagementResult.hidden = true;
+
+      const formData = new FormData(engagementForm);
+      const name = formData.get("name").trim();
+      const location = formData.get("location").trim();
+      const duration = Number(formData.get("duration"));
+
+      if (!name || !location || !Number.isInteger(duration) || duration < 1 || duration > 21) {
+        engagementStatus.textContent = "Vérifiez votre prénom, votre assemblée ou ville et une durée de 1 à 21 jours.";
+        return;
+      }
+
+      const context = engagementCanvas.getContext("2d");
+      if (!context) {
+        engagementStatus.textContent = "La création du visuel n’est pas prise en charge par ce navigateur.";
+        return;
+      }
+
+      context.fillStyle = "#10245f";
+      context.fillRect(0, 0, engagementCanvas.width, engagementCanvas.height);
+      const goldGlow = context.createRadialGradient(810, 250, 20, 810, 250, 720);
+      goldGlow.addColorStop(0, "rgba(255, 211, 100, 0.3)");
+      goldGlow.addColorStop(1, "rgba(255, 211, 100, 0)");
+      context.fillStyle = goldGlow;
+      context.fillRect(0, 0, engagementCanvas.width, engagementCanvas.height);
+      context.strokeStyle = "#f3c84b";
+      context.lineWidth = 12;
+      context.strokeRect(40, 40, engagementCanvas.width - 80, engagementCanvas.height - 80);
+
+      context.textAlign = "center";
+      context.fillStyle = "#ffe08a";
+      context.font = "700 36px Arial, sans-serif";
+      context.fillText("31e GRANDE OFFENSIVE", 540, 190);
+      context.font = "900 74px Arial, sans-serif";
+      context.fillText("LE POUVOIR", 540, 390);
+      context.fillText("DE LA PAROLE", 540, 480);
+      context.fillStyle = "#ffffff";
+      context.font = "700 34px Arial, sans-serif";
+      context.fillText("Matthieu 12:37", 540, 560);
+      context.strokeStyle = "rgba(255, 255, 255, 0.55)";
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(170, 630);
+      context.lineTo(910, 630);
+      context.stroke();
+      context.fillStyle = "#ffffff";
+      context.font = "700 32px Arial, sans-serif";
+      context.fillText("JE M’ENGAGE", 540, 735);
+      context.fillStyle = "#ffe08a";
+      context.font = "900 64px Arial, sans-serif";
+      const nameBottom = drawWrappedText(context, name, 540, 850, 820, 76);
+      context.fillStyle = "#ffffff";
+      context.font = "600 34px Arial, sans-serif";
+      const locationBottom = drawWrappedText(context, location, 540, nameBottom + 44, 820, 48);
+      context.fillStyle = "#ffe08a";
+      context.font = "700 32px Arial, sans-serif";
+      context.fillText(`${duration} jour${duration > 1 ? "s" : ""} de jeûne`, 540, Math.max(1090, locationBottom + 32));
+      context.fillStyle = "#ffffff";
+      context.font = "500 28px Arial, sans-serif";
+      context.fillText("15 novembre → 5 décembre 2026", 540, 1200);
+      context.font = "500 24px Arial, sans-serif";
+      context.fillText("Avec l’Apôtre Germain Ndeke", 540, 1260);
+
+      try {
+        const imageBlob = await new Promise((resolve) => engagementCanvas.toBlob(resolve, "image/png"));
+        if (!imageBlob) throw new Error("Impossible de générer l’image.");
+
+        if (cardImageUrl) URL.revokeObjectURL(cardImageUrl);
+        cardImageUrl = URL.createObjectURL(imageBlob);
+        downloadCard.href = cardImageUrl;
+        const shareText = `Je m’engage pour ${duration} jour${duration > 1 ? "s" : ""} à la 31e Grande Offensive « Le pouvoir de la Parole ». Matthieu 12:37`;
+        shareCard.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+        engagementResult.hidden = false;
+        engagementStatus.textContent = "Visuel créé. Téléchargez-le puis joignez-le à votre message WhatsApp si vous le souhaitez.";
+      } catch (error) {
+        engagementStatus.textContent = `Impossible de créer le visuel : ${error.message}`;
+      }
+    });
+
+    const checkinGrid = document.querySelector("#checkin-grid");
+    const checkinProgress = document.querySelector("#checkin-progress");
+    const checkinStatus = document.querySelector("#checkin-status");
+    const checkinStorageKey = "offensive-2026-checkin";
+    let checkedDays = Array(21).fill(false);
+
+    function updateCheckinProgress() {
+      const completed = checkedDays.filter(Boolean).length;
+      checkinProgress.textContent = `${completed} jour${completed === 1 ? "" : "s"} coché${completed === 1 ? "" : "s"} sur 21`;
+    }
+
+    try {
+      const savedDays = localStorage.getItem(checkinStorageKey);
+      if (savedDays) {
+        const parsedDays = JSON.parse(savedDays);
+        if (!Array.isArray(parsedDays) || parsedDays.length !== 21 || parsedDays.some((day) => typeof day !== "boolean")) {
+          throw new Error("Le suivi enregistré est invalide.");
+        }
+        checkedDays = parsedDays;
+      }
+    } catch (error) {
+      checkinStatus.textContent = `Le suivi local n’a pas pu être lu : ${error.message}`;
+    }
+
+    const checkinDateFormat = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+    for (let index = 0; index < 21; index++) {
+      const date = new Date(2026, 10, 15 + index);
+      const dayContainer = document.createElement("div");
+      const checkbox = document.createElement("input");
+      const label = document.createElement("label");
+      const dayName = document.createElement("strong");
+      const dayDate = document.createElement("span");
+
+      dayContainer.className = "checkin-day";
+      checkbox.type = "checkbox";
+      checkbox.id = `checkin-day-${index + 1}`;
+      checkbox.checked = checkedDays[index];
+      label.htmlFor = checkbox.id;
+      dayName.textContent = `Jour ${index + 1}`;
+      dayDate.textContent = checkinDateFormat.format(date);
+      label.append(dayName, dayDate);
+      dayContainer.append(checkbox, label);
+      checkinGrid.append(dayContainer);
+
+      checkbox.addEventListener("change", () => {
+        checkedDays[index] = checkbox.checked;
+        updateCheckinProgress();
+        try {
+          localStorage.setItem(checkinStorageKey, JSON.stringify(checkedDays));
+          checkinStatus.textContent = "";
+        } catch (error) {
+          checkinStatus.textContent = `Le suivi reste visible jusqu’à la fermeture de cette page, mais n’a pas pu être enregistré : ${error.message}`;
+        }
+      });
+    }
+
+    updateCheckinProgress();
+
+    const countdown = document.querySelector("#launch-countdown");
+    const countdownDays = countdown.querySelector("[data-countdown-days]");
+    const countdownHours = countdown.querySelector("[data-countdown-hours]");
+    const countdownMinutes = countdown.querySelector("[data-countdown-minutes]");
+    const countdownSeconds = countdown.querySelector("[data-countdown-seconds]");
+    const secondsGroup = countdownSeconds.parentElement;
+    const launchDate = new Date(2026, 10, 15, 0, 0, 0);
+
+    function updateCountdown() {
+      const remainingSeconds = Math.max(0, Math.floor((launchDate - Date.now()) / 1000));
+      const days = Math.floor(remainingSeconds / 86400);
+      const hours = Math.floor((remainingSeconds % 86400) / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
+
+      countdownDays.textContent = String(days);
+      countdownHours.textContent = String(hours).padStart(2, "0");
+      countdownMinutes.textContent = String(minutes).padStart(2, "0");
+      countdownSeconds.textContent = String(seconds).padStart(2, "0");
+      secondsGroup.classList.remove("is-ticking");
+      void secondsGroup.offsetWidth;
+      secondsGroup.classList.add("is-ticking");
+    }
+
+    updateCountdown();
+    window.setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
