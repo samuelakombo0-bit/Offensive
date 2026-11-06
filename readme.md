@@ -99,5 +99,8 @@ Carte des engagés, messages quotidiens WhatsApp, quiz ou défi sur la Parole, d
 - Respect du cahier des charges et absence de contenus officiels inventés.
 - Design responsive, léger et centré sur l’identité de l’Apôtre Germain Ndeke.
 - Toute évolution importante est soumise à validation.
+## une idée du mobile
+  <img width="647" height="409" alt="image" src="https://github.com/user-attachments/assets/612e3d1c-987b-46af-96f9-68f494203dac" />
+
 
 **Méthode de travail :** Cahier des charges → MVP → Présentation au client → Retours → Décisions → Évolutions.
