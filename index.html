@@ -65,16 +65,19 @@
 
   <main id="main-content">
     <section class="welcome" id="accueil" aria-labelledby="page-title">
-      <p class="welcome-kicker">31e édition · Offensive de jeûne et prière</p>
-      <h1 id="page-title">Le pouvoir<br>de la Parole</h1>
-      <p class="welcome-verse">Matthieu 12:37</p>
-      <div class="welcome-countdown" id="launch-countdown" role="timer" aria-label="Compte à rebours avant le lancement">
-        <span><strong data-countdown-days>--</strong><small>Jours</small></span>
-        <span><strong data-countdown-hours>--</strong><small>Heures</small></span>
-        <span><strong data-countdown-minutes>--</strong><small>Minutes</small></span>
-        <span><strong data-countdown-seconds>--</strong><small>Secondes</small></span>
+      <div class="welcome-content">
+        <img class="welcome-logo" src="./img/logo-edition.png" alt="Grande Offensive de jeûne et prière, 31e édition" width="312" height="135">
+        <h1 id="page-title" class="welcome-title">
+          <img src="./img/theme-titre.png" alt="Le pouvoir de la Parole — Matthieu 12:37" width="964" height="668">
+        </h1>
+        <div class="welcome-countdown" id="launch-countdown" role="timer" aria-label="Compte à rebours avant le lancement">
+          <span><strong data-countdown-days>--</strong><small>Jours</small></span>
+          <span><strong data-countdown-hours>--</strong><small>Heures</small></span>
+          <span><strong data-countdown-minutes>--</strong><small>Minutes</small></span>
+          <span><strong data-countdown-seconds>--</strong><small>Secondes</small></span>
+        </div>
+        <p class="welcome-dates">Du dimanche <strong>15 novembre</strong><br>au samedi <strong>5 décembre 2026</strong></p>
       </div>
-      <p class="welcome-dates">Du dimanche <strong>15 novembre</strong><br>au samedi <strong>5 décembre 2026</strong></p>
     </section>
 
     <section class="about-section" id="comprendre" aria-labelledby="about-title">
@@ -108,10 +111,31 @@
             </article>
 
             <article class="president-message">
-              <div>
+              <div class="president-message-copy">
                 <p class="message-label">Message du Président du Conseil</p>
-                <h3>Un message officiel sera publié ici.</h3>
-                <p>Le texte ou la vidéo sera ajouté dès qu’il sera disponible.</p>
+                <h3>Message de l’Apôtre Germain Ndeke</h3>
+                <div class="president-message-preview" id="president-message-preview">
+                  <p>Demeurez attachés au Seigneur, fidèles à Sa Parole et unis dans la vision. Avançons ensemble, car notre espérance est en Dieu et notre mission demeure « IMPLANTER LES EGLISES » et la proclamation de l’Évangile de Jésus-Christ. Je vous bénis abondamment au nom puissant de Jésus-Christ ! Amen !</p>
+                  <p><strong>Apôtre Germain NDEKE</strong><br>Visionnaire du Centre Missionnaire REHOBOTH</p>
+                </div>
+                <dialog class="president-message-dialog" id="president-message-dialog" aria-labelledby="president-message-dialog-title">
+                  <h2 id="president-message-dialog-title">Message de l’Apôtre Germain Ndeke</h2>
+                  <div class="president-message-full">
+                  <p>Que le Dieu grand vous bénisse selon la mesure de sa grandeur ! Bien-aimés dans le Seigneur, peuple de Dieu, famille du Centre Missionnaire Rehoboth, que la grâce et la paix de notre Seigneur Jésus-Christ soient votre partage !</p>
+                  <p>Je prie que le Dieu grand, le Dieu Tout-Puissant, Celui dont la grandeur est insondable, dont la puissance est illimitée et dont la fidélité demeure de génération en génération, vous bénisse selon la mesure de Sa grandeur. Que votre bénédiction ne soit pas limitée par la petitesse de vos moyens, mais qu'elle soit déterminée par l'immensité de la puissance de votre Dieu ! Que le Seigneur vous bénisse et vous garde ! Qu'Il fasse briller Sa face sur vous et vous accorde Sa grâce. Qu'Il tourne Sa face vers vous et vous donne Sa paix. Que Sa faveur vous environne, que Sa main vous soutienne et que Sa présence vous accompagne tous les jours de votre vie.</p>
+                  <p>Je bénis votre vie au nom de Jésus-Christ ! Que toute sécheresse fasse place à la fécondité, que toute confusion cède devant la lumière de Dieu et que toute porte conforme à Sa volonté s'ouvre devant vous. Que le Seigneur restaure ce qui a été brisé, relève ce qui est tombé, guérisse ce qui est blessé et renouvelle les forces de ceux qui sont fatigués. Que les familles soient affermies, que les couples soient fortifiés, que les enfants grandissent dans la crainte du Seigneur et que la paix de Dieu règne dans chaque maison.</p>
+                  <p>Je bénis vos activités, vos études, vos professions et vos entreprises. Que Dieu vous accorde la sagesse pour décider, la force pour persévérer, la faveur pour avancer et la discipline pour porter du fruit.</p>
+                  <p>Que vos mains soient rendues fécondes et que vos efforts, conduits selon Sa volonté, produisent des résultats qui glorifient Son nom. Je bénis votre vie spirituelle. Que votre amour pour Dieu grandisse, que votre communion avec le Saint-Esprit s'approfondisse, que votre connaissance des Écritures augmente et que votre foi demeure ferme au milieu des épreuves. Que vous soyez des disciples enracinés dans la Parole, des témoins courageux de Jésus-Christ, des adorateurs sincères et des sentinelles fidèles dans la prière.</p>
+                  <p>En cette année de la conquête totale, je déclare que nous avançons avec foi, dans l'obéissance à Dieu et sous la conduite de Son Esprit. Que chacun découvre sa place dans la vision, que les cœurs soient unis, que les mains travaillent ensemble et que notre engagement pour l'œuvre de Dieu porte un fruit durable. Que le Seigneur suscite des ouvriers fidèles, multiplie les disciples et nous donne les ressources nécessaires pour implanter des églises et étendre le témoignage de l'Évangile. Bien-aimés, ne mesurez jamais la fidélité de Dieu à la dimension de vos difficultés. Le Dieu qui vous appelle est capable de vous soutenir ; Celui qui vous conduit peut vous ouvrir un chemin ; Celui qui a commencé une œuvre en vous est fidèle pour vous aider à avancer jusqu'à son accomplissement, selon Son dessein.</p>
+                  <p>Que les paroles de Dieu deviennent votre espérance, que Ses promesses fortifient votre cœur et que votre bouche proclame la foi plutôt que la peur, la bénédiction plutôt que la malédiction, la vie plutôt que le découragement. Que vos paroles construisent vos familles, fortifient vos frères et sœurs et contribuent à l'édification de l'Église.</p>
+                  <p>Demeurez attachés au Seigneur, fidèles à Sa Parole et unis dans la vision. Avançons ensemble, car notre espérance est en Dieu et notre mission demeure « IMPLANTER LES EGLISES » et la proclamation de l'Évangile de Jésus-Christ. Je vous bénis abondamment au nom puissant de Jésus-Christ ! Amen !</p>
+                    <p><strong>Apôtre Germain NDEKE</strong><br>Visionnaire du Centre Missionnaire REHOBOTH</p>
+                  </div>
+                  <form class="president-message-dialog-actions" method="dialog">
+                    <button class="president-message-toggle" type="submit">Fermer le message</button>
+                  </form>
+                </dialog>
+                <button class="president-message-toggle" id="president-message-open" type="button" aria-haspopup="dialog" aria-controls="president-message-dialog">Tout lire</button>
               </div>
               <img src="./img/2.jpg" alt="Apôtre Germain Ndeke s’adressant à l’assemblée" width="1600" height="1067" loading="lazy" decoding="async">
             </article>
@@ -337,30 +361,25 @@
         <header class="assembly-heading">
           <p class="about-eyebrow">Près de vous</p>
           <h2 id="assembly-title">Trouver une assemblée</h2>
-          <p>Les informations ci-dessous proviennent des visuels présents dans le projet. La liste complète des assemblées reste à recevoir.</p>
+          <p>Recherchez une assemblée et sélectionnez-la pour afficher sa carte.</p>
         </header>
 
         <label class="assembly-search-label" for="assembly-search">Rechercher une assemblée ou une ville</label>
         <input class="assembly-search" id="assembly-search" type="search" placeholder="Ex. Matari" autocomplete="off">
-        <p class="assembly-search-status" id="assembly-search-status" role="status" aria-live="polite"></p>
+        <p class="assembly-search-status" id="assembly-search-status" role="status" aria-live="polite">Chargement des assemblées…</p>
 
         <div class="assembly-layout">
           <div class="assembly-list" id="assembly-list">
-            <article class="assembly-card" data-assembly-name="rehoboth matari" data-assembly-location="matari">
-              <p class="assembly-source">Coordonnées visibles sur le visuel de l’Assemblée Matari</p>
-              <h3>Rehoboth · Assemblée Matari</h3>
-              <address>N° 24, rue Ingouna</address>
-              <p><strong>Téléphones :</strong> <a href="tel:+242069838430">+242 06 983 84 30</a> · <a href="tel:+242050448000">05 044 80 00</a></p>
-              <p><strong>Réseaux :</strong> @cmrmatari</p>
-              <p class="assembly-missing">Horaires et référent : à communiquer.</p>
-            </article>
             <p class="assembly-empty" id="assembly-empty" hidden>Aucune assemblée de la liste actuelle ne correspond à cette recherche.</p>
           </div>
 
           <aside class="map-placeholder" aria-labelledby="map-title">
-            <div class="map-placeholder-mark" aria-hidden="true"></div>
-            <h3 id="map-title">Carte interactive à compléter</h3>
-            <p>Les adresses et coordonnées géographiques des assemblées (66 et plus, Dakar, etc.) sont nécessaires avant d’afficher leurs emplacements sur une carte fiable.</p>
+            <div class="map-placeholder-content" id="map-placeholder-content">
+              <div class="map-placeholder-mark" aria-hidden="true"></div>
+              <h3 id="map-title">Choisissez une assemblée</h3>
+              <p>Sa carte Google Maps s’affichera ici.</p>
+            </div>
+            <iframe class="assembly-map-frame" id="assembly-map-frame" title="Carte de l’assemblée sélectionnée" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen hidden></iframe>
           </aside>
         </div>
       </div>
@@ -577,19 +596,143 @@
       }
     });
 
+    const presidentMessageOpen = document.querySelector("#president-message-open");
+    const presidentMessageDialog = document.querySelector("#president-message-dialog");
+
+    presidentMessageOpen.addEventListener("click", () => presidentMessageDialog.showModal());
+
     const assemblySearch = document.querySelector("#assembly-search");
-    const assemblyCard = document.querySelector(".assembly-card");
+    const assemblyList = document.querySelector("#assembly-list");
     const assemblyEmpty = document.querySelector("#assembly-empty");
     const assemblySearchStatus = document.querySelector("#assembly-search-status");
+    const assemblyMap = document.querySelector("#assembly-map-frame");
+    const mapPlaceholderContent = document.querySelector("#map-placeholder-content");
+    const mapPanel = document.querySelector(".map-placeholder");
+    let assemblyLocations = [];
 
-    assemblySearch.addEventListener("input", () => {
+    function hideAssemblyMap() {
+      assemblyMap.removeAttribute("src");
+      delete assemblyMap.dataset.assemblyName;
+      assemblyMap.title = "Carte de l’assemblée sélectionnée";
+      assemblyMap.hidden = true;
+      mapPlaceholderContent.hidden = false;
+      mapPanel.classList.remove("is-showing-map");
+    }
+
+    function showAssemblyMap(assembly) {
+      if (assemblyMap.dataset.assemblyName !== assembly.nom) {
+        assemblyMap.src = assembly.lienIntegrationCarte;
+        assemblyMap.dataset.assemblyName = assembly.nom;
+      }
+      assemblyMap.title = `Carte Google Maps : ${assembly.nom}`;
+      assemblyMap.hidden = false;
+      mapPlaceholderContent.hidden = true;
+      mapPanel.classList.add("is-showing-map");
+      assemblyList.querySelectorAll("[data-assembly-map]").forEach((item) => {
+        item.setAttribute("aria-pressed", String(item.dataset.assemblyMap === assembly.nom));
+      });
+    }
+
+    function renderAssemblyList() {
       const query = assemblySearch.value.trim().toLocaleLowerCase("fr");
-      const searchableText = `${assemblyCard.dataset.assemblyName} ${assemblyCard.dataset.assemblyLocation}`;
-      const isMatch = searchableText.includes(query);
-      assemblyCard.hidden = !isMatch;
-      assemblyEmpty.hidden = isMatch;
-      assemblySearchStatus.textContent = isMatch ? "1 assemblée correspond à la recherche." : "Aucune assemblée trouvée dans la liste disponible.";
+      assemblyList.querySelectorAll(".assembly-card").forEach((card) => card.remove());
+
+      if (!query) {
+        assemblyEmpty.hidden = true;
+        assemblySearchStatus.textContent = "Saisissez un nom d’assemblée pour lancer la recherche.";
+        hideAssemblyMap();
+        return;
+      }
+
+      const matches = assemblyLocations.filter((assembly) => assembly.nom.toLocaleLowerCase("fr").includes(query));
+
+      for (const assembly of matches) {
+        const card = document.createElement("article");
+        const source = document.createElement("p");
+        const title = document.createElement("h3");
+        const button = document.createElement("button");
+        card.className = "assembly-card";
+        source.className = "assembly-source";
+        source.textContent = "Carte Google Maps";
+        title.textContent = assembly.nom;
+        button.className = "assembly-map-button";
+        button.type = "button";
+        button.dataset.assemblyMap = assembly.nom;
+        button.setAttribute("aria-pressed", String(assemblyMap.dataset.assemblyName === assembly.nom && !assemblyMap.hidden));
+        button.textContent = "Afficher la carte";
+        card.append(source, title);
+
+        if (assembly.adresse) {
+          const address = document.createElement("address");
+          address.textContent = assembly.adresse;
+          card.append(address);
+        }
+        if (Array.isArray(assembly.telephones) && assembly.telephones.length) {
+          const phoneLine = document.createElement("p");
+          phoneLine.append(document.createTextNode("Téléphones : "));
+          assembly.telephones.forEach((phone, index) => {
+            if (index) phoneLine.append(document.createTextNode(" · "));
+            const phoneLink = document.createElement("a");
+            phoneLink.href = `tel:${phone.replace(/[^+\d]/g, "")}`;
+            phoneLink.textContent = phone;
+            phoneLine.append(phoneLink);
+          });
+          card.append(phoneLine);
+        }
+        if (assembly.reseaux) {
+          const socialLine = document.createElement("p");
+          socialLine.textContent = `Réseaux : ${assembly.reseaux}`;
+          card.append(socialLine);
+        }
+        card.append(button);
+        assemblyList.insertBefore(card, assemblyEmpty);
+      }
+
+      assemblyEmpty.hidden = matches.length > 0;
+      assemblySearchStatus.textContent = `${matches.length} assemblée${matches.length === 1 ? "" : "s"} trouvée${matches.length === 1 ? "" : "s"}.`;
+      if (matches.length === 1) {
+        showAssemblyMap(matches[0]);
+      } else {
+        hideAssemblyMap();
+      }
+    }
+
+    assemblySearch.addEventListener("input", renderAssemblyList);
+    assemblyList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-assembly-map]");
+      if (!button) return;
+
+      const assembly = assemblyLocations.find((item) => item.nom === button.dataset.assemblyMap);
+      if (!assembly) return;
+      showAssemblyMap(assembly);
+      assemblySearchStatus.textContent = `Carte affichée : ${assembly.nom}.`;
     });
+
+    async function loadAssemblyLocations() {
+      try {
+        const response = await fetch("./liensCarte.json");
+        if (!response.ok) throw new Error("Le fichier des assemblées est introuvable.");
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("Le fichier doit contenir une liste d’assemblées.");
+        assemblyLocations = data.filter((assembly) => {
+          if (typeof assembly.nom !== "string" || typeof assembly.lienIntegrationCarte !== "string") return false;
+          try {
+            const mapUrl = new URL(assembly.lienIntegrationCarte);
+            return mapUrl.protocol === "https:" && mapUrl.hostname === "www.google.com" && mapUrl.pathname === "/maps/embed";
+          } catch {
+            return false;
+          }
+        });
+        if (!assemblyLocations.length) throw new Error("Aucune entrée Google Maps valide n’a été trouvée.");
+        renderAssemblyList();
+      } catch (error) {
+        assemblyEmpty.hidden = false;
+        assemblyEmpty.textContent = "La liste n’a pas pu être chargée. Ouvrez le site avec Live Server pour lire le fichier JSON.";
+        assemblySearchStatus.textContent = `Chargement impossible : ${error.message}`;
+      }
+    }
+
+    loadAssemblyLocations();
 
     const invitationText = [
       "Je vous invite à la 31e Grande Offensive de jeûne et prière.",
@@ -768,6 +911,13 @@
     const checkinStorageKey = "offensive-2026-checkin";
     let checkedDays = Array(21).fill(false);
 
+    function isCheckinDayAvailable(index) {
+      const eventDay = new Date(2026, 10, 15 + index);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return eventDay <= today;
+    }
+
     function updateCheckinProgress() {
       const completed = checkedDays.filter(Boolean).length;
       checkinProgress.textContent = `${completed} jour${completed === 1 ? "" : "s"} coché${completed === 1 ? "" : "s"} sur 21`;
@@ -780,7 +930,7 @@
         if (!Array.isArray(parsedDays) || parsedDays.length !== 21 || parsedDays.some((day) => typeof day !== "boolean")) {
           throw new Error("Le suivi enregistré est invalide.");
         }
-        checkedDays = parsedDays;
+        checkedDays = parsedDays.map((isChecked, index) => isChecked && isCheckinDayAvailable(index));
       }
     } catch (error) {
       checkinStatus.textContent = `Le suivi local n’a pas pu être lu : ${error.message}`;
@@ -799,6 +949,7 @@
       checkbox.type = "checkbox";
       checkbox.id = `checkin-day-${index + 1}`;
       checkbox.checked = checkedDays[index];
+      checkbox.disabled = !isCheckinDayAvailable(index);
       label.htmlFor = checkbox.id;
       dayName.textContent = `Jour ${index + 1}`;
       dayDate.textContent = checkinDateFormat.format(date);
@@ -819,6 +970,11 @@
     }
 
     updateCheckinProgress();
+    window.setInterval(() => {
+      checkinGrid.querySelectorAll("input").forEach((checkbox, index) => {
+        checkbox.disabled = !isCheckinDayAvailable(index);
+      });
+    }, 60_000);
 
     const countdown = document.querySelector("#launch-countdown");
     const countdownDays = countdown.querySelector("[data-countdown-days]");

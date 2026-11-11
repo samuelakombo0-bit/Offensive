@@ -13,7 +13,7 @@ Le site centralise les informations de l’événement et facilite la participat
 Le projet utilise uniquement HTML, CSS et JavaScript natifs. Il n’y a ni dépendance à installer ni serveur backend.
 
 1. Ouvrir le dossier du projet dans VS Code.
-2. Ouvrir `index.html` dans un navigateur, ou utiliser l’extension Live Server.
+2. Lancer `index.html` avec l’extension Live Server. Le navigateur doit servir le site en HTTP pour pouvoir charger `liensCarte.json`; l’ouverture directe du fichier HTML ne permet pas toujours cette lecture.
 
 ## Fonctionnalités présentes
 
@@ -24,7 +24,7 @@ Le projet utilise uniquement HTML, CSS et JavaScript natifs. Il n’y a ni dépe
 - Conseils de jeûne, avec contenus santé à compléter après validation médicale.
 - Formulaire local qui génère un visuel téléchargeable et prépare un partage WhatsApp.
 - Suivi personnel des 21 jours enregistré dans le navigateur.
-- Recherche dans la liste d’assemblées actuellement disponible.
+- Recherche dans la liste locale des assemblées de `liensCarte.json` et affichage de leur carte Google Maps à la sélection.
 - Téléchargement de l’affiche et des visuels présents dans le projet.
 - Sections pour les médias, les témoignages, la FAQ et les informations pratiques.
 - Mode clair/sombre et pied de page avec liens de navigation.
@@ -38,7 +38,7 @@ Ce MVP est entièrement statique : aucune donnée de formulaire n’est envoyée
 - **Suivi des jours :** sauvegardé uniquement dans le navigateur et sur l’appareil utilisés.
 - **Livret :** les pensées ou versets des 21 jours, les trois thèmes hebdomadaires et les informations d’achat ou de téléchargement restent à confirmer.
 - **Conseils santé :** les informations sur l’alimentation, les précautions et les cas particuliers doivent être validées par les médecins concernés avant publication.
-- **Assemblées :** les coordonnées disponibles concernent l’Assemblée Matari. Les horaires, le référent, les autres assemblées et les coordonnées nécessaires à une carte restent à fournir.
+- **Assemblées :** les noms et liens de carte sont stockés localement dans `liensCarte.json`. Les adresses, horaires, contacts et référents manquants restent à fournir.
 - **Médias et témoignages :** les emplacements sont prévus, mais aucun contenu officiel ni formulaire de soumission modérée n’est intégré.
 - **Contact et réseaux :** les coordonnées générales et les liens officiels de l’Offensive restent à confirmer.
 
@@ -50,6 +50,7 @@ Ne pas publier de contenu officiel, de recommandation médicale ou de donnée ma
 | --- | --- |
 | `index.html` | Contenu des pages, formulaires et interactions JavaScript |
 | `style.css` | Mise en page, styles responsive, animations et thèmes clair/sombre |
+| `liensCarte.json` | Noms et liens d’intégration Google Maps des assemblées |
 | `affiche-offensive-2026.jpg` | Affiche de la 31e édition |
 | `img/` | Logo et visuels fournis |
 | `.gitignore` | Fichiers locaux et fichiers système exclus de Git |

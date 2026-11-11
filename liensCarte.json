@@ -1,0 +1,29 @@
+[
+    {
+        "nom": "REHOBOTH Matari CM",
+        "lienIntegrationCarte": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127320.89620874039!2d15.098689743359378!3d-4.2633597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6bcddc3a37c137%3A0xd018e1ecd8f50dd3!2sREHOBOTH%20Matari%20CM!5e0!3m2!1sfr!2scg!4v1794347702817!5m2!1sfr!2scg",
+        "adresse": "N° 24, rue Ingouna",
+        "telephones": ["+242 06 983 84 30", "05 044 80 00"],
+        "reseaux": "@cmrmatari"
+    },
+    {
+        "nom": "Centre Missionnaire REHOBOTH de Mikalou",
+        "lienIntegrationCarte": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127320.89620874039!2d15.098689743359378!3d-4.2633597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6bcd6d07081f37%3A0xd5514b517217936b!2sCentre%20Missionnaire%20REHOBOTH%20de%20Mikalou!5e0!3m2!1sfr!2scg!4v1794347853636!5m2!1sfr!2scg"
+    },
+    {
+        "nom": "Eglise Centre missionnaire Rehoboth Talangaï",
+        "lienIntegrationCarte": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127320.89620874039!2d15.098689743359378!3d-4.2633597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6bccb91510e8d9%3A0xf5957d612d45dd65!2sEglise%20Centre%20missionnaire%20Rehoboth%20Talanga%C3%AF!5e0!3m2!1sfr!2scg!4v1794348002023!5m2!1sfr!2scg"
+    },
+    {
+        "nom": "Centre Missionnaire REHOBOTH Centre-Ville",
+        "lienIntegrationCarte": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127320.89620874039!2d15.098689743359378!3d-4.2633597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a336b38520a73%3A0xfa560e59f7345bb9!2sCentre%20Missionnaire%20REHOBOTH%20Centre-Ville!5e0!3m2!1sfr!2scg!4v1794348084137!5m2!1sfr!2scg"
+    },
+    {
+        "nom": "Centre Missionnaire Rehoboth Maman Mboualé",
+        "lienIntegrationCarte": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127320.89620874039!2d15.098689743359378!3d-4.2633597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6bcd03b6028847%3A0xf4e39bfd8c392602!2sCentre%20Missionnaire%20Rehoboth%20Maman%20Mboual%C3%A9!5e0!3m2!1sfr!2scg!4v1794348282425!5m2!1sfr!2scg"
+    },
+    {
+        "nom": "Centre Missionnaire Rehoboth assemblée du plateau des 15 ans",
+        "lienIntegrationCarte": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127320.89620874039!2d15.098689743359378!3d-4.2633597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a334ac41425c5%3A0x5795ca91d3684a5a!2sCentre%20Missionnaire%20Rehoboth%20assembl%C3%A9e%20du%20plateau%20des%2015%20ans!5e0!3m2!1sfr!2scg!4v1794348518682!5m2!1sfr!2scg"
+    }
+]
