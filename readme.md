@@ -48,8 +48,10 @@ Ne pas publier de contenu officiel, de recommandation médicale ou de donnée ma
 
 | Fichier ou dossier | Rôle |
 | --- | --- |
-| `index.html` | Contenu des pages, formulaires et interactions JavaScript |
+| `index.html` | Contenu des pages et formulaires |
 | `style.css` | Mise en page, styles responsive, animations et thèmes clair/sombre |
+| `theme.js` | Préférence de thème initialisée avant l’affichage de la page |
+| `script.js` | Interactions de la page |
 | `liensCarte.json` | Noms et liens d’intégration Google Maps des assemblées |
 | `affiche-offensive-2026.jpg` | Affiche de la 31e édition |
 | `img/` | Logo et visuels fournis |
