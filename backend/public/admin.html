@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183a91">
+  <meta name="description" content="Espace de gestion de la Grande Offensive 2026.">
+  <title>Administration — Grande Offensive</title>
+  <link rel="stylesheet" href="/admin.css">
+  <script src="/admin.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#admin-main">Aller au contenu</a>
+  <header class="admin-header">
+    <a class="admin-brand" href="/" aria-label="Retour au site de la Grande Offensive">
+      <span class="brand-mark" aria-hidden="true">GO</span>
+      <span><strong>Grande Offensive</strong><small>Administration</small></span>
+    </a>
+    <div class="admin-account" id="admin-account" hidden>
+      <span id="admin-name"></span>
+      <button class="button button-outline" id="logout-button" type="button">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="admin-main" id="admin-main">
+    <section class="login-panel panel" id="login-panel" aria-labelledby="login-title">
+      <p class="eyebrow">Accès réservé</p>
+      <h1 id="login-title">Connexion administrateur</h1>
+      <p>Les comptes sont créés de manière contrôlée depuis le terminal du serveur.</p>
+      <form id="login-form">
+        <label for="login-email">Adresse e-mail</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" required maxlength="100">
+        <label for="login-password">Mot de passe</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="128">
+        <button class="button button-primary" type="submit">Se connecter</button>
+      </form>
+      <p class="status" id="login-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden aria-labelledby="dashboard-title">
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Espace sécurisé</p>
+          <h1 id="dashboard-title">Tableau de bord</h1>
+          <p>Suivi des engagements et validation des témoignages avant publication.</p>
+        </div>
+      </div>
+
+      <p class="status global-status" id="global-status" role="status" aria-live="polite"></p>
+
+      <section class="stats-grid" id="stats-grid" aria-label="Statistiques">
+        <article class="stat-card"><span>Participants</span><strong data-stat="participants">—</strong></article>
+        <article class="stat-card"><span>Engagements</span><strong data-stat="engagements">—</strong></article>
+        <article class="stat-card"><span>Cartes</span><strong data-stat="cards">—</strong></article>
+        <article class="stat-card"><span>Jours validés</span><strong data-stat="checkins">—</strong></article>
+        <article class="stat-card stat-pending"><span>À modérer</span><strong data-stat="pendingTestimonials">—</strong></article>
+        <article class="stat-card"><span>Témoignages approuvés</span><strong data-stat="approvedTestimonials">—</strong></article>
+      </section>
+
+      <section class="panel content-panel" aria-labelledby="checkin-chart-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Progression collective</p>
+            <h2 id="checkin-chart-title">Validations quotidiennes</h2>
+          </div>
+        </div>
+        <div class="chart-grid" id="checkin-chart" role="group" aria-label="Nombre de participants ayant validé chaque jour"></div>
+      </section>
+
+      <section class="panel content-panel" aria-labelledby="testimonials-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Publication contrôlée</p>
+            <h2 id="testimonials-title">Témoignages</h2>
+          </div>
+          <form class="search-form" id="testimonial-search-form">
+            <label class="sr-only" for="testimonial-status-filter">Filtrer les témoignages</label>
+            <select id="testimonial-status-filter">
+              <option value="EN_ATTENTE">En attente</option>
+              <option value="APPROUVE">Approuvés</option>
+              <option value="REFUSE">Refusés</option>
+              <option value="TOUS">Tous</option>
+            </select>
+            <label class="sr-only" for="testimonial-search">Rechercher un témoignage</label>
+            <input id="testimonial-search" type="search" maxlength="100" placeholder="Rechercher un texte">
+            <button class="button button-secondary" type="submit">Rechercher</button>
+          </form>
+        </div>
+        <div class="record-list" id="testimonial-list" aria-live="polite"></div>
+        <div class="pagination" id="testimonial-pagination"></div>
+      </section>
+
+      <section class="panel content-panel" aria-labelledby="participants-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Données d’engagement</p>
+            <h2 id="participants-title">Participants</h2>
+          </div>
+          <form class="search-form" id="participant-search-form">
+            <label class="sr-only" for="participant-search">Rechercher un participant</label>
+            <input id="participant-search" type="search" maxlength="100" placeholder="Nom, prénom ou téléphone">
+            <button class="button button-secondary" type="submit">Rechercher</button>
+          </form>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Participant</th><th>Téléphone</th><th>Engagements</th><th>Jours validés</th><th>Compte créé</th><th>Gestion</th></tr>
+            </thead>
+            <tbody id="participant-list"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="participant-pagination"></div>
+      </section>
+
+      <section class="panel content-panel" aria-labelledby="audit-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Traçabilité</p>
+            <h2 id="audit-title">Journal des actions administratives</h2>
+          </div>
+        </div>
+        <div class="record-list" id="audit-list" aria-live="polite"></div>
+        <div class="pagination" id="audit-pagination"></div>
+      </section>
+    </section>
+  </main>
+  <footer class="admin-footer">
+    <a href="/">Retour au site public</a>
+    <span>Grande Offensive · 2026</span>
+  </footer>
+</body>
+</html>

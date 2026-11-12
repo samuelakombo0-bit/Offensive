@@ -259,13 +259,24 @@
         <header class="engagement-heading">
           <p class="about-eyebrow">Le cœur de l’Offensive</p>
           <h2 id="engagement-title">Je m’engage</h2>
-          <p>Indiquez vos informations pour créer un visuel à partager. Elles restent dans votre navigateur et ne sont pas envoyées.</p>
+          <p>Votre nom et votre téléphone permettent de créer un participant et plusieurs cartes. La session du navigateur permet de retrouver ce compte après fermeture ; le téléphone n’est pas vérifié par SMS pour le moment.</p>
         </header>
 
         <div class="engagement-grid">
           <form class="engagement-form" id="engagement-form">
-            <label for="participant-name">Prénom</label>
-            <input id="participant-name" name="name" type="text" autocomplete="given-name" maxlength="60" required>
+            <label for="participant-first-name">Prénom</label>
+            <input id="participant-first-name" name="firstName" type="text" autocomplete="given-name" maxlength="100" required>
+
+            <label for="participant-last-name">Nom</label>
+            <input id="participant-last-name" name="lastName" type="text" autocomplete="family-name" maxlength="100" required>
+
+            <label for="participant-phone">Téléphone</label>
+            <input id="participant-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="50" required aria-describedby="phone-help">
+            <small id="phone-help">Gardez le même numéro et le même navigateur pour réutiliser le compte. Si les cookies sont effacés ou si vous changez d’appareil, la récupération par SMS n’est pas encore disponible.</small>
+
+            <label for="participant-time-zone">Fuseau horaire</label>
+            <input id="participant-time-zone" name="timeZone" type="text" autocomplete="off" maxlength="64" required aria-describedby="time-zone-help">
+            <small id="time-zone-help">Prérempli par le navigateur et conservé avec votre compte. Vérifiez-le si vous vous trouvez dans une autre région. Les fuseaux des autres pays seront ajoutés à partir de l’API officielle lorsqu’elle sera disponible.</small>
 
             <label for="participant-location">Assemblée ou ville</label>
             <input id="participant-location" name="location" type="text" autocomplete="address-level2" maxlength="80" required>
@@ -276,7 +287,12 @@
 
             <label for="prayer-subject">Sujet de prière (facultatif)</label>
             <textarea id="prayer-subject" name="prayer" rows="3" maxlength="300"></textarea>
-            <small>Ce sujet n’apparaît pas sur le visuel partagé.</small>
+            <small>Ce sujet reste dans le navigateur et n’est pas envoyé au serveur ni affiché sur le visuel.</small>
+
+            <label class="consent-label" for="participant-consent">
+              <input id="participant-consent" name="consent" type="checkbox" value="true" required>
+              <span>J’accepte la conservation de mon nom et de mon téléphone jusqu’à la fin de l’Offensive pour gérer mes engagements.</span>
+            </label>
 
             <button class="engagement-submit" type="submit">Créer mon visuel</button>
             <p class="form-status" id="engagement-status" role="status" aria-live="polite"></p>
@@ -295,15 +311,15 @@
         <section class="public-counter" aria-labelledby="counter-title">
           <div>
             <h3 id="counter-title">Engagements mobilisés</h3>
-            <p>Les chiffres publics seront affichés après la mise en place d’un système de collecte.</p>
+            <p id="counter-status" role="status">Nombre de participants distincts et nombre de cartes enregistrées.</p>
           </div>
-          <p class="counter-values"><span>— <small>engagés</small></span><span>— <small>assemblées</small></span></p>
+          <p class="counter-values"><span id="participant-count" aria-live="polite">— <small>participants</small></span><span id="card-count" aria-live="polite">— <small>cartes</small></span></p>
         </section>
 
         <section class="daily-checkin" aria-labelledby="checkin-title">
           <div class="daily-checkin-heading">
             <h3 id="checkin-title">Mon suivi des 21 jours</h3>
-            <p>Votre suivi est enregistré uniquement sur cet appareil.</p>
+            <p>Après création d’une carte, votre suivi est synchronisé à votre session participant.</p>
           </div>
           <div class="checkin-progress" aria-live="polite" id="checkin-progress">0 jour coché sur 21</div>
           <div class="checkin-grid" id="checkin-grid"></div>
@@ -436,9 +452,26 @@
           <p>Les témoignages écrits, photos et vidéos devront être relus et modérés avant toute publication.</p>
         </header>
 
-        <div class="testimonials-notice">
-          <h3>Soumissions bientôt disponibles</h3>
-          <p>Aucun formulaire d’envoi n’est activé pour le moment : le site n’a pas de serveur pour recevoir ou modérer les contenus. Le responsable et le canal officiel de soumission restent à confirmer.</p>
+        <div class="testimonials-layout">
+          <form class="testimonials-form" id="testimonial-form">
+            <h3>Soumettre un témoignage</h3>
+            <p>Créez d’abord une carte dans ce navigateur pour ouvrir une session participant. Chaque témoignage sera relu par l’administrateur avant publication.</p>
+            <label for="testimonial-message">Votre témoignage</label>
+            <textarea id="testimonial-message" name="message" rows="5" minlength="10" maxlength="1000" required></textarea>
+            <label for="testimonial-image">Image facultative</label>
+            <input id="testimonial-image" name="image" type="file" accept="image/jpeg,image/png,image/webp">
+            <small>JPEG, PNG ou WebP, 5 Mo maximum. Le fichier reste privé avant approbation.</small>
+            <label class="testimonial-consent" for="testimonial-consent">
+              <input id="testimonial-consent" name="publicationConsent" type="checkbox" required>
+              <span>J’accepte que ce témoignage soit publié s’il est approuvé.</span>
+            </label>
+            <button type="submit">Envoyer pour validation</button>
+            <p class="form-status" id="testimonial-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="testimonials-list" id="testimonials-list" aria-live="polite">
+            <p>Les témoignages approuvés s’afficheront ici.</p>
+          </div>
         </div>
       </div>
     </section>

@@ -1,3 +1,35 @@
+// Les appels JSON affichent les erreurs API au lieu de faire croire qu'une action a été enregistrée.
+async function requestApi(url, options = {}) {
+  let response;
+  try {
+    response = await fetch(url, { credentials: "same-origin", ...options });
+  } catch {
+    const localServerHint = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+      && window.location.port !== "3000"
+      ? " Pour ce projet, démarrez le backend puis ouvrez http://localhost:3000 (pas Live Server)."
+      : " Vérifiez que le backend Express est démarré.";
+    throw new Error(`Impossible de joindre l’API.${localServerHint}`);
+  }
+
+  let payload = null;
+  if (response.status !== 204) {
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.toLowerCase().includes("json")) {
+      throw new Error(
+        `L’API a répondu en HTTP ${response.status} avec le type « ${contentType || "inconnu"} » au lieu de JSON (${response.url}). Ouvrez le site sur http://localhost:3000 et vérifiez que le backend Express est démarré.`,
+      );
+    }
+
+    try {
+      payload = await response.json();
+    } catch {
+      throw new Error(`L’API a répondu en HTTP ${response.status}, mais son JSON est invalide (${response.url}).`);
+    }
+  }
+  if (!response.ok) throw new Error(payload?.error?.message || "La requête n’a pas abouti.");
+  return payload;
+}
+
 const menuToggle = document.querySelector(".menu-toggle");
     const navigation = document.querySelector(".primary-navigation");
     const menuLabel = document.querySelector(".menu-label");
@@ -254,6 +286,8 @@ const menuToggle = document.querySelector(".menu-toggle");
     const downloadCard = document.querySelector("#download-card");
     const shareCard = document.querySelector("#share-card");
     let cardImageUrl = "";
+    const timeZoneField = document.querySelector("#participant-time-zone");
+    timeZoneField.value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
     function drawWrappedText(context, text, x, y, maxWidth, lineHeight) {
       const lines = [];
@@ -294,12 +328,15 @@ const menuToggle = document.querySelector(".menu-toggle");
       engagementResult.hidden = true;
 
       const formData = new FormData(engagementForm);
-      const name = formData.get("name").trim();
-      const location = formData.get("location").trim();
+      const firstName = String(formData.get("firstName") || "").trim();
+      const lastName = String(formData.get("lastName") || "").trim();
+      const phone = String(formData.get("phone") || "").trim();
+      const location = String(formData.get("location") || "").trim();
       const duration = Number(formData.get("duration"));
+      const fullName = `${firstName} ${lastName}`.trim();
 
-      if (!name || !location || !Number.isInteger(duration) || duration < 1 || duration > 21) {
-        engagementStatus.textContent = "Vérifiez votre prénom, votre assemblée ou ville et une durée de 1 à 21 jours.";
+      if (!firstName || !lastName || !phone || !location || !Number.isInteger(duration) || duration < 1 || duration > 21) {
+        engagementStatus.textContent = "Vérifiez votre nom, votre prénom, votre téléphone, votre assemblée ou ville et une durée de 1 à 21 jours.";
         return;
       }
 
@@ -341,7 +378,7 @@ const menuToggle = document.querySelector(".menu-toggle");
       context.fillText("JE M’ENGAGE", 540, 735);
       context.fillStyle = "#ffe08a";
       context.font = "900 64px Arial, sans-serif";
-      const nameBottom = drawWrappedText(context, name, 540, 850, 820, 76);
+      const nameBottom = drawWrappedText(context, fullName, 540, 850, 820, 76);
       context.fillStyle = "#ffffff";
       context.font = "600 34px Arial, sans-serif";
       const locationBottom = drawWrappedText(context, location, 540, nameBottom + 44, 820, 48);
@@ -364,23 +401,80 @@ const menuToggle = document.querySelector(".menu-toggle");
         const shareText = `Je m’engage pour ${duration} jour${duration > 1 ? "s" : ""} à la 31e Grande Offensive « Le pouvoir de la Parole ». Matthieu 12:37`;
         shareCard.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
         engagementResult.hidden = false;
-        engagementStatus.textContent = "Visuel créé. Téléchargez-le puis joignez-le à votre message WhatsApp si vous le souhaitez.";
+        try {
+          await requestApi("/api/engagements", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              firstName,
+              lastName,
+              phone,
+              timeZone: timeZoneField.value.trim(),
+              location,
+              duration,
+              consent: formData.get("consent") === "true",
+            }),
+          });
+          engagementStatus.textContent = "Carte enregistrée. Téléchargez-la puis joignez-la à votre message WhatsApp si vous le souhaitez.";
+          await Promise.all([loadPublicStats(), refreshCheckins(), restoreParticipantForm()]);
+        } catch (error) {
+          engagementStatus.textContent = `Visuel créé sur cet appareil, mais engagement non enregistré sur le serveur : ${error.message}`;
+        }
       } catch (error) {
         engagementStatus.textContent = `Impossible de créer le visuel : ${error.message}`;
       }
     });
+
+    // Les compteurs publics ne contiennent que des totaux, jamais les coordonnées des participants.
+    async function loadPublicStats() {
+      try {
+        const stats = await requestApi("/api/stats");
+        const participantCount = document.querySelector("#participant-count");
+        const cardCount = document.querySelector("#card-count");
+        participantCount.replaceChildren(document.createTextNode(stats.participants.toLocaleString("fr-FR")), participantCount.querySelector("small"));
+        cardCount.replaceChildren(document.createTextNode(stats.cards.toLocaleString("fr-FR")), cardCount.querySelector("small"));
+      } catch {
+        document.querySelector("#counter-status").textContent = "Les compteurs seront disponibles lorsque le serveur sera connecté.";
+      }
+    }
+
+    // Le cookie HttpOnly permet de préremplir les champs uniquement dans le navigateur déjà reconnu.
+    async function restoreParticipantForm() {
+      try {
+        const session = await requestApi("/api/me");
+        if (!session.authenticated) return;
+        document.querySelector("#participant-first-name").value = session.participant.firstName;
+        document.querySelector("#participant-last-name").value = session.participant.lastName;
+        document.querySelector("#participant-phone").value = session.participant.phone;
+        timeZoneField.value = session.participant.timeZone || timeZoneField.value;
+      } catch {
+        engagementStatus.textContent = "Le serveur n’est pas connecté : le visuel restera local et ne sera pas enregistré.";
+      }
+    }
+
+    loadPublicStats();
+    restoreParticipantForm();
 
     const checkinGrid = document.querySelector("#checkin-grid");
     const checkinProgress = document.querySelector("#checkin-progress");
     const checkinStatus = document.querySelector("#checkin-status");
     const checkinStorageKey = "offensive-2026-checkin";
     let checkedDays = Array(21).fill(false);
+    let eventStartDate = "2026-11-15";
+    let eventTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+    let hasParticipantSession = false;
 
     function isCheckinDayAvailable(index) {
-      const eventDay = new Date(2026, 10, 15 + index);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return eventDay <= today;
+      const currentDate = Object.fromEntries(new Intl.DateTimeFormat("en-CA", {
+        timeZone: eventTimeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).formatToParts(new Date()).map(({ type, value }) => [type, value]));
+      const currentMidnight = Date.UTC(Number(currentDate.year), Number(currentDate.month) - 1, Number(currentDate.day));
+      const startMidnight = Date.parse(`${eventStartDate}T00:00:00Z`);
+      const elapsedDays = Math.floor((currentMidnight - startMidnight) / 86_400_000) + 1;
+      return index + 1 <= elapsedDays;
     }
 
     function updateCheckinProgress() {
@@ -401,9 +495,10 @@ const menuToggle = document.querySelector(".menu-toggle");
       checkinStatus.textContent = `Le suivi local n’a pas pu être lu : ${error.message}`;
     }
 
-    const checkinDateFormat = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+    const checkinDateFormat = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" });
+    const [startYear, startMonth, startDay] = eventStartDate.split("-").map(Number);
     for (let index = 0; index < 21; index++) {
-      const date = new Date(2026, 10, 15 + index);
+      const date = new Date(Date.UTC(startYear, startMonth - 1, startDay + index, 12));
       const dayContainer = document.createElement("div");
       const checkbox = document.createElement("input");
       const label = document.createElement("label");
@@ -422,24 +517,163 @@ const menuToggle = document.querySelector(".menu-toggle");
       dayContainer.append(checkbox, label);
       checkinGrid.append(dayContainer);
 
-      checkbox.addEventListener("change", () => {
+      checkbox.addEventListener("change", async () => {
+        const previousValue = checkedDays[index];
         checkedDays[index] = checkbox.checked;
         updateCheckinProgress();
         try {
           localStorage.setItem(checkinStorageKey, JSON.stringify(checkedDays));
-          checkinStatus.textContent = "";
         } catch (error) {
-          checkinStatus.textContent = `Le suivi reste visible jusqu’à la fermeture de cette page, mais n’a pas pu être enregistré : ${error.message}`;
+          checkinStatus.textContent = `Le cache local n’a pas pu être actualisé : ${error.message}`;
+        }
+
+        if (hasParticipantSession) {
+          try {
+            if (checkbox.checked) {
+              await requestApi("/api/checkins", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ day: index + 1 }),
+              });
+            } else {
+              await requestApi(`/api/checkins/${index + 1}`, { method: "DELETE" });
+            }
+            checkinStatus.textContent = "Suivi synchronisé avec votre compte.";
+          } catch (error) {
+            checkedDays[index] = previousValue;
+            checkbox.checked = previousValue;
+            updateCheckinProgress();
+            checkinStatus.textContent = `Le changement n’a pas été enregistré sur le serveur : ${error.message}`;
+          }
+        } else {
+          checkinStatus.textContent = "Suivi conservé uniquement dans ce navigateur. Créez une carte pour le synchroniser.";
         }
       });
     }
 
     updateCheckinProgress();
+
+    // La validation du jour et le fuseau annoncés par l'API remplacent l'horloge du visiteur.
+    async function refreshCheckins() {
+      try {
+        const metadata = await requestApi("/api/meta");
+        eventStartDate = metadata.eventStartDate;
+        eventTimeZone = metadata.eventTimeZone;
+        const session = await requestApi("/api/me");
+        hasParticipantSession = session.authenticated;
+
+        if (!hasParticipantSession) {
+          checkinStatus.textContent = "Suivi local sur cet appareil. Créez une carte pour le retrouver dans votre compte.";
+          return;
+        }
+
+        eventTimeZone = session.participant.timeZone || eventTimeZone;
+        const serverData = await requestApi("/api/checkins");
+        checkedDays = Array(21).fill(false);
+        serverData.days.forEach(({ jour }) => {
+          if (Number.isInteger(jour) && jour >= 1 && jour <= 21) checkedDays[jour - 1] = true;
+        });
+        checkinGrid.querySelectorAll("input").forEach((checkbox, index) => {
+          checkbox.checked = checkedDays[index];
+          checkbox.disabled = !isCheckinDayAvailable(index);
+        });
+        updateCheckinProgress();
+        checkinStatus.textContent = "Votre suivi est synchronisé avec le serveur.";
+        try {
+          localStorage.setItem(checkinStorageKey, JSON.stringify(checkedDays));
+        } catch (error) {
+          checkinStatus.textContent = `Suivi synchronisé, mais cache local indisponible : ${error.message}`;
+        }
+      } catch (error) {
+        checkinStatus.textContent = `Suivi limité à ce navigateur ; synchronisation indisponible : ${error.message}`;
+      }
+    }
+
+    refreshCheckins();
     window.setInterval(() => {
       checkinGrid.querySelectorAll("input").forEach((checkbox, index) => {
         checkbox.disabled = !isCheckinDayAvailable(index);
       });
     }, 60_000);
+
+    const testimonialForm = document.querySelector("#testimonial-form");
+    const testimonialStatus = document.querySelector("#testimonial-status");
+    const testimonialsList = document.querySelector("#testimonials-list");
+    let testimonialPage = 1;
+
+    // Les cartes et témoignages approuvés sont créés avec textContent pour empêcher l'injection HTML.
+    async function loadTestimonials(page = 1) {
+      testimonialsList.replaceChildren();
+      try {
+        const result = await requestApi(`/api/testimonials?page=${page}`);
+        testimonialPage = result.page;
+        if (result.items.length === 0 && page === 1) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "Aucun témoignage approuvé n’est publié pour le moment.";
+          testimonialsList.append(emptyMessage);
+          return;
+        }
+
+        result.items.forEach((item) => {
+          const card = document.createElement("article");
+          const date = document.createElement("time");
+          const message = document.createElement("p");
+          card.className = "testimonial-card";
+          date.dateTime = new Date(item.date).toISOString();
+          date.textContent = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" }).format(new Date(item.date));
+          message.textContent = item.message;
+          card.append(date, message);
+          if (item.imageUrl) {
+            const image = document.createElement("img");
+            image.src = item.imageUrl;
+            image.alt = "Image d’un témoignage approuvé";
+            image.loading = "lazy";
+            card.append(image);
+          }
+          testimonialsList.append(card);
+        });
+
+        if (result.total > 12) {
+          const pagination = document.createElement("div");
+          const previousButton = document.createElement("button");
+          const nextButton = document.createElement("button");
+          pagination.className = "testimonial-pagination";
+          previousButton.type = "button";
+          previousButton.textContent = "Précédent";
+          previousButton.disabled = page <= 1;
+          previousButton.addEventListener("click", () => loadTestimonials(page - 1));
+          nextButton.type = "button";
+          nextButton.textContent = "Suivants";
+          nextButton.disabled = page * 12 >= result.total;
+          nextButton.addEventListener("click", () => loadTestimonials(page + 1));
+          pagination.append(previousButton, nextButton);
+          testimonialsList.append(pagination);
+        }
+      } catch (error) {
+        const message = document.createElement("p");
+        message.textContent = `Les témoignages ne sont pas disponibles : ${error.message}`;
+        testimonialsList.append(message);
+      }
+    }
+
+    testimonialForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      testimonialStatus.textContent = "Envoi du témoignage…";
+      const submitButton = testimonialForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      try {
+        const formData = new FormData(testimonialForm);
+        await requestApi("/api/testimonials", { method: "POST", body: formData });
+        testimonialForm.reset();
+        testimonialStatus.textContent = "Témoignage transmis. Il sera visible après approbation par l’administrateur.";
+      } catch (error) {
+        testimonialStatus.textContent = `Témoignage non envoyé : ${error.message}`;
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    loadTestimonials();
 
     const countdown = document.querySelector("#launch-countdown");
     const countdownDays = countdown.querySelector("[data-countdown-days]");
