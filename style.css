@@ -889,7 +889,7 @@ button:focus-visible {
   border-top: 4px solid var(--gold);
 }
 
-.fasting-card .medical-validation {
+.fasting-card  {
   margin: 0;
   padding: 12px;
   border-radius: 6px;
@@ -898,7 +898,6 @@ button:focus-visible {
   font-size: 14px;
   font-weight: 700;
 }
-
 .engagement-section,
 .media-section {
   padding: clamp(56px, 8vw, 104px) 20px;
