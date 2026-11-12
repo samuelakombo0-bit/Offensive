@@ -10,3 +10,4 @@ Thumbs.db
 Desktop.ini
 affiche-offensive-2026.png
 node_modules/
+.env/
