@@ -1,0 +1,24 @@
+{
+  "name": "offensive",
+  "version": "1.0.0",
+  "description": "Site vitrine de la **31e Grande Offensive de jeûne et prière**, qui se déroule du **15 novembre au 5 décembre 2026**.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelakombo0-bit/Offensive.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/samuelakombo0-bit/Offensive/issues"
+  },
+  "homepage": "https://github.com/samuelakombo0-bit/Offensive#readme",
+  "dependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

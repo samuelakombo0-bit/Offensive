@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum StatutTemoignage {
+  EN_ATTENTE
+  APPROUVE
+  REFUSE
+
+  @@map("statut_temoignage")
+}
+
+model Administrateur {
+  idAdministrateur    Int            @id @default(autoincrement()) @map("id_administrateur")
+  nomAdministrateur   String         @map("nom_administrateur") @db.VarChar(100)
+  emailAdministrateur String         @unique(map: "email_adminstrateur") @map("email_adminstrateur") @db.VarChar(100)
+  motDePasse          String         @map("mot_de_passe") @db.VarChar(255)
+  dateCreation        DateTime?      @default(now()) @map("date_creation") @db.DateTime(0)
+  derniereConnexion   DateTime?      @map("derniere_connexion") @db.DateTime(0)
+  sessions            SessionAuth[]
+  temoignagesModeres  Temoignage[]   @relation("ModerateurTemoignage")
+  actions             JournalAdmin[]
+
+  @@map("administrateur")
+}
+
+model Assemblee {
+  idAssemblee       Int         @id @map("id_assemblee")
+  nomAssemblee      String      @map("nom_assemblee") @db.VarChar(50)
+  villeAssemblee    String      @map("ville_assemblee") @db.VarChar(50)
+  quartierAssemblee String      @map("quartier_assemblee") @db.VarChar(100)
+  idParticipant     Int         @map("id_participant")
+  participant       Participant @relation(fields: [idParticipant], references: [idParticipant], map: "assemblee_ibfk_1")
+
+  @@index([idParticipant], map: "id_participant")
+  @@map("assemblee")
+}
+
+model Participant {
+  idParticipant        Int                     @id @default(autoincrement()) @map("id_participant")
+  idAssembler          Int?                    @map("id_assembler")
+  nomParticipant       String                  @map("nom_participant") @db.VarChar(100)
+  prenomParticipant    String                  @map("prenom_participant") @db.VarChar(100)
+  telephoneParticipant String                  @unique(map: "telephone_participant") @map("telephone_participant") @db.VarChar(50)
+  fuseauHoraire        String                  @default("UTC") @map("fuseau_horaire") @db.VarChar(64)
+  dateCreation         DateTime                @default(now()) @map("date_creation") @db.DateTime(3)
+  consentementDonnees  DateTime?               @map("consentement_donnees") @db.DateTime(3)
+  assemblees           Assemblee[]
+  suivies              ParticipantSuivie[]
+  temoignages          TemoignageParticipant[]
+  temoignagesAuteurs   Temoignage[]            @relation("AuteurTemoignage")
+  engagements          Engagement[]
+  suivisJournaliers    SuiviJournalier[]
+  sessions             SessionAuth[]
+
+  @@map("participant")
+}
+
+model ParticipantSuivie {
+  idSuivie      Int         @map("id_suivie")
+  idParticipant Int         @map("id_participant")
+  suivie        Suivie      @relation(fields: [idSuivie], references: [idSuivie], map: "participant_suivie_ibfk_1")
+  participant   Participant @relation(fields: [idParticipant], references: [idParticipant], map: "participant_suivie_ibfk_2")
+
+  @@id([idSuivie, idParticipant])
+  @@index([idParticipant], map: "id_participant")
+  @@map("participant_suivie")
+}
+
+model Suivie {
+  idSuivie      Int                 @id @map("id_suivie")
+  idParticipant Int                 @map("id_participant")
+  joursSuivie   Int                 @map("jours_suivie")
+  dateSuivie    DateTime            @map("date_suivie") @db.DateTime(0)
+  statutSuivie  Boolean?            @map("statut_suivie")
+  participants  ParticipantSuivie[]
+
+  @@map("suivie")
+}
+
+model Engagement {
+  idEngagement  Int         @id @default(autoincrement()) @map("id_engagement")
+  idParticipant Int         @map("id_participant")
+  lieu          String      @map("lieu_engagement") @db.VarChar(120)
+  joursChoisis  Int         @map("jours_choisis")
+  dateCreation  DateTime    @default(now()) @map("date_creation") @db.DateTime(3)
+  participant   Participant @relation(fields: [idParticipant], references: [idParticipant], onDelete: Cascade, map: "engagement_ibfk_1")
+  cartes        Carte[]
+
+  @@index([idParticipant, dateCreation], map: "engagement_participant_date_idx")
+  @@map("engagement")
+}
+
+model Carte {
+  idCarte      Int        @id @default(autoincrement()) @map("id_carte")
+  idEngagement Int        @map("id_engagement")
+  dateCreation DateTime   @default(now()) @map("date_creation") @db.DateTime(3)
+  engagement   Engagement @relation(fields: [idEngagement], references: [idEngagement], onDelete: Cascade, map: "carte_ibfk_1")
+
+  @@index([idEngagement], map: "carte_engagement_idx")
+  @@map("carte")
+}
+
+model SuiviJournalier {
+  idSuivi        Int         @id @default(autoincrement()) @map("id_suivi")
+  idParticipant  Int         @map("id_participant")
+  jour           Int         @map("jour")
+  dateValidation DateTime    @default(now()) @map("date_validation") @db.DateTime(3)
+  participant    Participant @relation(fields: [idParticipant], references: [idParticipant], onDelete: Cascade, map: "suivi_journalier_ibfk_1")
+
+  @@unique([idParticipant, jour], map: "suivi_journalier_participant_jour_uq")
+  @@index([dateValidation], map: "suivi_journalier_date_idx")
+  @@map("suivi_journalier")
+}
+
+model Temoignage {
+  idTemoignage      Int                     @id @default(autoincrement()) @map("id_temoignage")
+  messageTemoignage String                  @map("message_temoignage") @db.VarChar(1000)
+  dateTemoignage    DateTime                @default(now()) @map("date_temoignage") @db.DateTime(3)
+  statut            StatutTemoignage        @default(EN_ATTENTE)
+  imagePrivee       String?                 @map("image_privee") @db.VarChar(255)
+  idParticipant     Int?                    @map("id_participant")
+  idModerateur      Int?                    @map("id_moderateur")
+  dateModeration    DateTime?               @map("date_moderation") @db.DateTime(3)
+  auteur            Participant?            @relation("AuteurTemoignage", fields: [idParticipant], references: [idParticipant], onDelete: SetNull, map: "temoignage_auteur_ibfk")
+  moderateur        Administrateur?         @relation("ModerateurTemoignage", fields: [idModerateur], references: [idAdministrateur], onDelete: SetNull, map: "temoignage_moderateur_ibfk")
+  participants      TemoignageParticipant[]
+
+  @@index([statut, dateTemoignage], map: "temoignage_statut_date_idx")
+  @@index([idParticipant], map: "temoignage_participant_idx")
+  @@map("temoignage")
+}
+
+model TemoignageParticipant {
+  idTemoignage  Int         @map("id_temoignage")
+  idParticipant Int         @map("id_participant")
+  temoignage    Temoignage  @relation(fields: [idTemoignage], references: [idTemoignage], map: "temoignage_participant_ibfk_1")
+  participant   Participant @relation(fields: [idParticipant], references: [idParticipant], map: "temoignage_participant_ibfk_2")
+
+  @@id([idTemoignage, idParticipant])
+  @@index([idParticipant], map: "id_participant")
+  @@map("temoignage_participant")
+}
+
+model SessionAuth {
+  idSession        Int             @id @default(autoincrement()) @map("id_session")
+  empreinte        String          @unique(map: "session_auth_empreinte_uq") @map("empreinte") @db.Char(64)
+  idParticipant    Int?            @map("id_participant")
+  idAdministrateur Int?            @map("id_administrateur")
+  dateCreation     DateTime        @default(now()) @map("date_creation") @db.DateTime(3)
+  dateExpiration   DateTime        @map("date_expiration") @db.DateTime(3)
+  participant      Participant?    @relation(fields: [idParticipant], references: [idParticipant], onDelete: Cascade, map: "session_auth_participant_ibfk")
+  administrateur   Administrateur? @relation(fields: [idAdministrateur], references: [idAdministrateur], onDelete: Cascade, map: "session_auth_admin_ibfk")
+
+  @@index([dateExpiration], map: "session_auth_expiration_idx")
+  @@index([idAdministrateur], map: "session_auth_admin_idx")
+  @@map("session_auth")
+}
+
+model JournalAdmin {
+  idAction         Int             @id @default(autoincrement()) @map("id_action")
+  idAdministrateur Int?            @map("id_administrateur")
+  action           String          @map("action") @db.VarChar(80)
+  cible            String          @map("cible") @db.VarChar(80)
+  idCible          String?         @map("id_cible") @db.VarChar(64)
+  details          String?         @map("details") @db.VarChar(1000)
+  dateCreation     DateTime        @default(now()) @map("date_creation") @db.DateTime(3)
+  administrateur   Administrateur? @relation(fields: [idAdministrateur], references: [idAdministrateur], onDelete: SetNull, map: "journal_admin_admin_ibfk")
+
+  @@index([dateCreation], map: "journal_admin_date_idx")
+  @@index([idAdministrateur], map: "journal_admin_admin_idx")
+  @@map("journal_admin")
+}

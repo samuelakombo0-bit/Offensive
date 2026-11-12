@@ -995,6 +995,23 @@ button:focus-visible {
   line-height: 1.5;
 }
 
+.engagement-form .consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.engagement-form .consent-label input {
+  width: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  margin-top: 2px;
+  padding: 0;
+}
+
 .engagement-submit,
 .engagement-action {
   display: inline-flex;
@@ -1654,6 +1671,136 @@ button:focus-visible {
   margin: 0;
 }
 
+.testimonials-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.testimonials-form,
+.testimonial-card {
+  padding: clamp(20px, 4vw, 30px);
+  border: 1px solid #e3e7f0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(23 33 58 / 5%);
+}
+
+.testimonials-form {
+  display: grid;
+  gap: 10px;
+}
+
+.testimonials-form h3,
+.testimonial-card h3 {
+  margin: 0;
+  color: var(--royal-blue);
+}
+
+.testimonials-form p,
+.testimonials-form small,
+.testimonial-card time {
+  color: #59637a;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.testimonials-form label {
+  margin-top: 6px;
+  color: #26334e;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.testimonials-form textarea,
+.testimonials-form input[type="file"] {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #b9c1d2;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+.testimonials-form textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.testimonials-form .testimonial-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.testimonials-form .testimonial-consent input {
+  width: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  margin-top: 2px;
+}
+
+.testimonials-form button,
+.testimonial-pagination button {
+  min-height: 46px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--royal-blue);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.testimonials-form button:hover,
+.testimonial-pagination button:hover {
+  background: var(--royal-blue-dark);
+}
+
+.testimonials-form button:focus-visible,
+.testimonial-pagination button:focus-visible {
+  outline: 3px solid rgb(33 70 179 / 38%);
+  outline-offset: 2px;
+}
+
+.testimonials-list {
+  display: grid;
+  gap: 14px;
+}
+
+.testimonial-card p {
+  margin: 12px 0;
+  color: #46516a;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.testimonial-card img {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  margin-top: 14px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.testimonial-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.testimonial-pagination button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .practical-heading {
   margin-bottom: 34px;
 }
@@ -2074,6 +2221,8 @@ button:focus-visible {
 [data-theme="dark"] .kit-card,
 [data-theme="dark"] .copy-texts,
 [data-theme="dark"] .testimonials-notice,
+[data-theme="dark"] .testimonials-form,
+[data-theme="dark"] .testimonial-card,
 [data-theme="dark"] .practical-card {
   border-color: #34415d;
   background-color: #17233a;
@@ -2099,7 +2248,9 @@ button:focus-visible {
 
 [data-theme="dark"] .assembly-search,
 [data-theme="dark"] .engagement-form input,
-[data-theme="dark"] .engagement-form textarea {
+[data-theme="dark"] .engagement-form textarea,
+[data-theme="dark"] .testimonials-form textarea,
+[data-theme="dark"] .testimonials-form input[type="file"] {
   border-color: #53617a;
   background: #10182b;
   color: #f1f4fa;
@@ -2139,6 +2290,8 @@ button:focus-visible {
 [data-theme="dark"] .kit-card h3,
 [data-theme="dark"] .copy-texts h3,
 [data-theme="dark"] .testimonials-notice h3,
+[data-theme="dark"] .testimonials-form h3,
+[data-theme="dark"] .testimonial-card h3,
 [data-theme="dark"] .practical-card h3 {
   color: #dce5ff;
 }
@@ -2157,6 +2310,11 @@ button:focus-visible {
 [data-theme="dark"] .engagement-heading > p:last-child,
 [data-theme="dark"] .engagement-form label,
 [data-theme="dark"] .engagement-form > small,
+[data-theme="dark"] .testimonials-form label,
+[data-theme="dark"] .testimonials-form p,
+[data-theme="dark"] .testimonials-form small,
+[data-theme="dark"] .testimonial-card p,
+[data-theme="dark"] .testimonial-card time,
 [data-theme="dark"] .public-counter > div > p,
 [data-theme="dark"] .daily-checkin-heading > p,
 [data-theme="dark"] .media-heading > p:last-child,
@@ -2260,4 +2418,10 @@ button:focus-visible {
 
 [data-theme="dark"] .theme-toggle {
   border-color: rgb(255 255 255 / 70%);
+}
+
+@media (max-width: 760px) {
+  .testimonials-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
