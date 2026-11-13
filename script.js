@@ -66,30 +66,6 @@ async function loadEngagementAssemblies() {
 
 loadEngagementAssemblies();
 
-async function loadPublishedDevotional() {
-  const status = document.querySelector("#devotional-status");
-  try {
-    const result = await requestApi("/api/devotional");
-    const themes = new Map(result.weeks.map((week) => [week.week, week.theme]));
-    const contents = new Map(result.days.map((day) => [day.day, day.content]));
-
-    document.querySelectorAll(".week-card").forEach((card, weekIndex) => {
-      const week = weekIndex + 1;
-      const theme = card.querySelector(".week-theme");
-      theme.textContent = themes.get(week) || "Thème hebdomadaire à confirmer";
-
-      card.querySelectorAll(".daily-readings li").forEach((entry, dayIndex) => {
-        const day = weekIndex * 7 + dayIndex + 1;
-        entry.lastElementChild.textContent = contents.get(day) || "À publier";
-      });
-    });
-  } catch (error) {
-    status.textContent = `Le programme des 21 jours n’a pas pu être chargé : ${error.message}`;
-  }
-}
-
-loadPublishedDevotional();
-
 const menuToggle = document.querySelector(".menu-toggle");
     const navigation = document.querySelector(".primary-navigation");
     const menuLabel = document.querySelector(".menu-label");
@@ -702,6 +678,12 @@ const menuToggle = document.querySelector(".menu-toggle");
           date.textContent = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" }).format(new Date(item.date));
           message.textContent = item.message;
           card.append(date, message);
+          if (item.authorName) {
+            const author = document.createElement("p");
+            author.className = "testimonial-author";
+            author.textContent = `Par ${item.authorName}`;
+            card.append(author);
+          }
           if (item.imageUrl) {
             const image = document.createElement("img");
             image.src = item.imageUrl;
