@@ -1780,22 +1780,50 @@ button:focus-visible {
 
 .testimonials-list {
   display: grid;
-  gap: 14px;
+  gap: 16px;
+}
+
+.testimonial-card {
+  border-left: 4px solid var(--gold);
+  border-radius: 6px 16px 16px 6px;
+  background: linear-gradient(145deg, #fff, #f8faff);
+  box-shadow: 0 12px 30px rgb(23 33 58 / 8%);
+}
+
+.testimonial-card time {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f0f3fb;
+  color: #41506f;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .testimonial-card p {
-  margin: 12px 0;
-  color: #46516a;
-  line-height: 1.65;
+  margin: 18px 0;
+  color: #293652;
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.75;
   overflow-wrap: anywhere;
+}
+
+.testimonial-card .testimonial-author {
+  margin: 20px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid #e3e7f0;
+  color: var(--royal-blue);
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .testimonial-card img {
   display: block;
   width: 100%;
   max-height: 380px;
-  margin-top: 14px;
-  border-radius: 8px;
+  margin-top: 20px;
+  border-radius: 10px;
   object-fit: cover;
 }
 
@@ -2235,6 +2263,21 @@ button:focus-visible {
 [data-theme="dark"] .practical-card {
   border-color: #34415d;
   background-color: #17233a;
+}
+
+[data-theme="dark"] .testimonial-card {
+  border-left-color: var(--gold);
+  background: linear-gradient(145deg, #17233a, #141f34);
+}
+
+[data-theme="dark"] .testimonial-card time {
+  background: #202c43;
+  color: #e3eaff;
+}
+
+[data-theme="dark"] .testimonial-card .testimonial-author {
+  border-top-color: #34415d;
+  color: #ffe08a;
 }
 
 [data-theme="dark"] .president-message-dialog {
