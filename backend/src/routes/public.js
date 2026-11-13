@@ -13,7 +13,7 @@ const cardInput = z.object({
   firstName: z.string().trim().min(1, "Le prénom est obligatoire.").max(100),
   lastName: z.string().trim().min(1, "Le nom est obligatoire.").max(100),
   phone: z.string().trim().min(1, "Le téléphone est obligatoire.").max(50),
-  location: z.string().trim().min(1, "L’assemblée ou la ville est obligatoire.").max(120),
+  assemblyId: z.coerce.number().int().min(1),
   timeZone: z.string().trim().min(1).max(64),
   duration: z.coerce.number().int().min(1).max(21),
   consent: z.literal(true, { error: "Le consentement à la conservation des données est obligatoire." }),
@@ -44,6 +44,40 @@ function createPublicRouter({ prisma, config }) {
       eventStartDate: config.eventStartDate,
       eventTimeZone: config.eventTimeZone,
       eventDays: 21,
+    });
+  });
+
+  router.get("/devotional", async (request, response) => {
+    const [weeks, days] = await Promise.all([
+      prisma.themeHebdomadaire.findMany({
+        where: { publie: true },
+        orderBy: { semaine: "asc" },
+        select: { semaine: true, theme: true },
+      }),
+      prisma.contenuJournalier.findMany({
+        where: { publie: true },
+        orderBy: { jour: "asc" },
+        select: { jour: true, contenu: true },
+      }),
+    ]);
+    response.json({
+      weeks: weeks.map((item) => ({ week: item.semaine, theme: item.theme })),
+      days: days.map((item) => ({ day: item.jour, content: item.contenu })),
+    });
+  });
+
+  router.get("/assemblies", async (request, response) => {
+    const assemblies = await prisma.assembleeCatalogue.findMany({
+      where: { actif: true },
+      orderBy: [{ villeAssemblee: "asc" }, { nomAssemblee: "asc" }],
+      select: { idAssemblee: true, nomAssemblee: true, villeAssemblee: true },
+    });
+    response.json({
+      items: assemblies.map((item) => ({
+        id: item.idAssemblee,
+        name: item.nomAssemblee,
+        city: item.villeAssemblee,
+      })),
     });
   });
 
@@ -78,10 +112,6 @@ function createPublicRouter({ prisma, config }) {
       throw new AppError(400, "INVALID_TIME_ZONE", "Le fuseau horaire envoyé n’est pas reconnu.");
     }
 
-    if (request.identity?.kind === "admin") {
-      throw new AppError(409, "PARTICIPANT_SESSION_REQUIRED", "Déconnectez le panneau administrateur avant de créer une carte participant.");
-    }
-
     const returningParticipant = request.identity?.kind === "participant" ? request.identity.participant : null;
     if (returningParticipant && returningParticipant.telephoneParticipant !== phone) {
       throw new AppError(409, "PHONE_MISMATCH", "Le téléphone doit rester le même dans ce navigateur pour réutiliser le compte.");
@@ -92,6 +122,15 @@ function createPublicRouter({ prisma, config }) {
     let result;
     try {
       result = await prisma.$transaction(async (transaction) => {
+        const assembly = await transaction.assembleeCatalogue.findFirst({
+          where: { idAssemblee: input.assemblyId, actif: true },
+          select: { nomAssemblee: true, villeAssemblee: true },
+        });
+        if (!assembly) {
+          throw new AppError(400, "INVALID_ASSEMBLY", "Choisissez une assemblée disponible dans la liste.");
+        }
+        const location = `${assembly.nomAssemblee} — ${assembly.villeAssemblee}`;
+
         let participant;
         if (returningParticipant) {
           participant = await transaction.participant.update({
@@ -132,7 +171,7 @@ function createPublicRouter({ prisma, config }) {
         const engagement = await transaction.engagement.create({
           data: {
             idParticipant: participant.idParticipant,
-            lieu: input.location,
+            lieu: location,
             joursChoisis: input.duration,
           },
         });

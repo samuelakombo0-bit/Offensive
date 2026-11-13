@@ -6,8 +6,8 @@ function loadConfig(environment = process.env) {
   if (!databaseUrl) throw new Error("DATABASE_URL doit être défini dans backend/.env.");
 
   const parsedDatabaseUrl = new URL(databaseUrl);
-  if (!["mysql:", "mariadb:"].includes(parsedDatabaseUrl.protocol)) {
-    throw new Error("DATABASE_URL doit utiliser le protocole mysql:// ou mariadb://.");
+  if (!["postgres:", "postgresql:"].includes(parsedDatabaseUrl.protocol)) {
+    throw new Error("DATABASE_URL doit utiliser le protocole postgres:// ou postgresql://.");
   }
 
   const port = Number(environment.PORT || 3000);

@@ -5,7 +5,12 @@ const { rateLimit } = require("express-rate-limit");
 const { z } = require("zod");
 const { AppError, parseInput } = require("../errors");
 const { hashSessionToken } = require("../identity");
-const { destroySession, SESSION_COOKIE, setSessionCookie } = require("../security");
+const {
+  ADMIN_SESSION_COOKIE,
+  ADMIN_COOKIE_PATH,
+  destroySession,
+  setSessionCookie,
+} = require("../security");
 const { requireAdmin } = require("../middleware");
 const { removePrivateImage, resolvePrivateImage } = require("../storage");
 
@@ -22,6 +27,20 @@ const participantUpdateInput = z.object({
   lastName: z.string().trim().min(1).max(100).optional(),
   phone: z.string().trim().min(1).max(50).optional(),
 }).strict().refine((value) => Object.keys(value).length > 0, "Fournissez au moins un champ à modifier.");
+const weeklyContentInput = z.object({
+  theme: z.string().trim().max(240),
+  published: z.boolean(),
+}).strict().refine((value) => !value.published || value.theme.length > 0, {
+  message: "Saisissez le thème avant de le publier.",
+  path: ["theme"],
+});
+const dailyContentInput = z.object({
+  content: z.string().trim().max(3000),
+  published: z.boolean(),
+}).strict().refine((value) => !value.published || value.content.length > 0, {
+  message: "Saisissez le contenu du jour avant de le publier.",
+  path: ["content"],
+});
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -56,7 +75,7 @@ function createAdminRouter({ prisma, config }) {
       throw new AppError(401, "INVALID_ADMIN_CREDENTIALS", "Adresse ou mot de passe incorrect.");
     }
 
-    if (request.cookies[SESSION_COOKIE]) {
+    if (request.identity?.kind === "admin") {
       await destroySession(prisma, request, response, config);
     }
     const token = randomBytes(32).toString("base64url");
@@ -83,7 +102,7 @@ function createAdminRouter({ prisma, config }) {
       });
     });
 
-    setSessionCookie(response, token, config);
+    setSessionCookie(response, token, config, ADMIN_SESSION_COOKIE, ADMIN_COOKIE_PATH);
     return response.json({ admin: { name: admin.nomAdministrateur, email: admin.emailAdministrateur } });
   });
 
@@ -134,14 +153,71 @@ function createAdminRouter({ prisma, config }) {
     });
   });
 
-  router.get("/testimonials", requireAdmin, async (request, response) => {
-    const requestedStatus = request.query.status || "EN_ATTENTE";
+  router.get("/devotional", requireAdmin, async (request, response) => {
+    const [themes, contents] = await Promise.all([
+      prisma.themeHebdomadaire.findMany({ orderBy: { semaine: "asc" } }),
+      prisma.contenuJournalier.findMany({ orderBy: { jour: "asc" } }),
+    ]);
+    const themesByWeek = new Map(themes.map((item) => [item.semaine, item]));
+    const contentsByDay = new Map(contents.map((item) => [item.jour, item]));
+    response.json({
+      weeks: Array.from({ length: 3 }, (_, index) => {
+        const week = index + 1;
+        const item = themesByWeek.get(week);
+        return { week, theme: item?.theme || "", published: item?.publie || false };
+      }),
+      days: Array.from({ length: 21 }, (_, index) => {
+        const day = index + 1;
+        const item = contentsByDay.get(day);
+        return { day, content: item?.contenu || "", published: item?.publie || false };
+      }),
+    });
+  });
+
+  router.put("/devotional/weeks/:week", requireAdmin, async (request, response) => {
+    const week = Number(request.params.week);
+    if (!Number.isInteger(week) || week < 1 || week > 3) {
+      throw new AppError(400, "INVALID_DEVOTIONAL_WEEK", "La semaine doit être comprise entre 1 et 3.");
+    }
+    const input = parseInput(weeklyContentInput, request.body);
+    const updated = await prisma.$transaction(async (transaction) => {
+      const item = await transaction.themeHebdomadaire.upsert({
+        where: { semaine: week },
+        create: { semaine: week, theme: input.theme, publie: input.published },
+        update: { theme: input.theme, publie: input.published },
+      });
+      await logAction(transaction, request, "CONTENU_SEMAINE", "SEMAINE", week, { published: input.published });
+      return item;
+    });
+    response.json({ week: updated.semaine, theme: updated.theme, published: updated.publie });
+  });
+
+  router.put("/devotional/days/:day", requireAdmin, async (request, response) => {
+    const day = Number(request.params.day);
+    if (!Number.isInteger(day) || day < 1 || day > 21) {
+      throw new AppError(400, "INVALID_DEVOTIONAL_DAY", "Le jour doit être compris entre 1 et 21.");
+    }
+    const input = parseInput(dailyContentInput, request.body);
+    const updated = await prisma.$transaction(async (transaction) => {
+      const item = await transaction.contenuJournalier.upsert({
+        where: { jour: day },
+        create: { jour: day, contenu: input.content, publie: input.published },
+        update: { contenu: input.content, publie: input.published },
+      });
+      await logAction(transaction, request, "CONTENU_JOUR", "JOUR", day, { published: input.published });
+      return item;
+    });
+    response.json({ day: updated.jour, content: updated.contenu, published: updated.publie });
+  });
+
+  router.post("/testimonials", requireAdmin, async (request, response) => {
+    const requestedStatus = request.body.status || "EN_ATTENTE";
     if (!["EN_ATTENTE", "APPROUVE", "REFUSE", "TOUS"].includes(requestedStatus)) {
       throw new AppError(400, "INVALID_TESTIMONIAL_STATUS", "Filtre de modération invalide.");
     }
-    const page = Math.max(1, Number.parseInt(request.query.page, 10) || 1);
+    const page = Math.max(1, Number.parseInt(request.body.page, 10) || 1);
     const pageSize = 10;
-    const search = String(request.query.search || "").trim().slice(0, 100);
+    const search = String(request.body.search || "").trim().slice(0, 100);
     const where = {
       ...(requestedStatus === "TOUS" ? {} : { statut: requestedStatus }),
       ...(search ? { messageTemoignage: { contains: search } } : {}),
@@ -223,10 +299,10 @@ function createAdminRouter({ prisma, config }) {
     response.status(204).end();
   });
 
-  router.get("/participants", requireAdmin, async (request, response) => {
-    const page = Math.max(1, Number.parseInt(request.query.page, 10) || 1);
+  router.post("/participants", requireAdmin, async (request, response) => {
+    const page = Math.max(1, Number.parseInt(request.body.page, 10) || 1);
     const pageSize = 20;
-    const search = String(request.query.search || "").trim().slice(0, 100);
+    const search = String(request.body.search || "").trim().slice(0, 100);
     const where = search
       ? {
           OR: [

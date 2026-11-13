@@ -1,92 +1,91 @@
--- CreateTable
-CREATE TABLE `administrateur` (
-    `id_administrateur` INTEGER NOT NULL AUTO_INCREMENT,
-    `nom_administrateur` VARCHAR(100) NOT NULL,
-    `email_adminstrateur` VARCHAR(100) NOT NULL,
-    `mot_de_passe` VARCHAR(255) NOT NULL,
-    `date_creation` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `derniere_connexion` DATETIME(0) NULL,
+CREATE TABLE administrateur (
+    id_administrateur SERIAL NOT NULL,
+    nom_administrateur VARCHAR(100) NOT NULL,
+    email_adminstrateur VARCHAR(100) NOT NULL,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    date_creation TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    derniere_connexion TIMESTAMP(0) NULL,
+    CONSTRAINT administrateur_pkey PRIMARY KEY (id_administrateur)
+);
 
-    UNIQUE INDEX `email_adminstrateur`(`email_adminstrateur`),
-    PRIMARY KEY (`id_administrateur`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE UNIQUE INDEX email_adminstrateur ON administrateur (email_adminstrateur);
 
--- CreateTable
-CREATE TABLE `assemblee` (
-    `id_assemblee` INTEGER NOT NULL,
-    `nom_assemblee` VARCHAR(50) NOT NULL,
-    `ville_assemblee` VARCHAR(50) NOT NULL,
-    `quartier_assemblee` VARCHAR(100) NOT NULL,
-    `id_participant` INTEGER NOT NULL,
+CREATE TABLE participant (
+    id_participant SERIAL NOT NULL,
+    id_assembler INTEGER NULL,
+    nom_participant VARCHAR(100) NOT NULL,
+    prenom_participant VARCHAR(100) NOT NULL,
+    telephone_participant VARCHAR(50) NOT NULL,
+    CONSTRAINT participant_pkey PRIMARY KEY (id_participant)
+);
 
-    INDEX `id_participant`(`id_participant`),
-    PRIMARY KEY (`id_assemblee`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE UNIQUE INDEX telephone_participant ON participant (telephone_participant);
 
--- CreateTable
-CREATE TABLE `participant` (
-    `id_participant` INTEGER NOT NULL AUTO_INCREMENT,
-    `id_assembler` INTEGER NULL,
-    `nom_participant` VARCHAR(100) NOT NULL,
-    `prenom_participant` VARCHAR(100) NOT NULL,
-    `telephone_participant` VARCHAR(50) NOT NULL,
+CREATE TABLE assemblee (
+    id_assemblee INTEGER NOT NULL,
+    nom_assemblee VARCHAR(50) NOT NULL,
+    ville_assemblee VARCHAR(50) NOT NULL,
+    quartier_assemblee VARCHAR(100) NOT NULL,
+    id_participant INTEGER NOT NULL,
+    CONSTRAINT assemblee_pkey PRIMARY KEY (id_assemblee)
+);
 
-    UNIQUE INDEX `telephone_participant`(`telephone_participant`),
-    PRIMARY KEY (`id_participant`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE INDEX assemblee_id_participant_idx ON assemblee (id_participant);
 
--- CreateTable
-CREATE TABLE `participant_suivie` (
-    `id_suivie` INTEGER NOT NULL,
-    `id_participant` INTEGER NOT NULL,
+CREATE TABLE suivie (
+    id_suivie INTEGER NOT NULL,
+    id_participant INTEGER NOT NULL,
+    jours_suivie INTEGER NOT NULL,
+    date_suivie TIMESTAMP(0) NOT NULL,
+    statut_suivie BOOLEAN NULL,
+    CONSTRAINT suivie_pkey PRIMARY KEY (id_suivie),
+    CONSTRAINT suivie_chk_1 CHECK (jours_suivie BETWEEN 1 AND 21)
+);
 
-    INDEX `id_participant`(`id_participant`),
-    PRIMARY KEY (`id_suivie`, `id_participant`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE TABLE participant_suivie (
+    id_suivie INTEGER NOT NULL,
+    id_participant INTEGER NOT NULL,
+    CONSTRAINT participant_suivie_pkey PRIMARY KEY (id_suivie, id_participant)
+);
 
--- CreateTable
-CREATE TABLE `suivie` (
-    `id_suivie` INTEGER NOT NULL,
-    `id_participant` INTEGER NOT NULL,
-    `jours_suivie` INTEGER NOT NULL,
-    `date_suivie` DATETIME(0) NOT NULL,
-    `statut_suivie` BOOLEAN NULL,
+CREATE INDEX participant_suivie_id_participant_idx ON participant_suivie (id_participant);
 
-    PRIMARY KEY (`id_suivie`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE TABLE temoignage (
+    id_temoignage INTEGER NOT NULL,
+    message_temoignage VARCHAR(1000) NOT NULL,
+    date_temoignage TIMESTAMP(0) NOT NULL,
+    CONSTRAINT temoignage_pkey PRIMARY KEY (id_temoignage)
+);
 
--- CreateTable
-CREATE TABLE `temoignage` (
-    `id_temoignage` INTEGER NOT NULL,
-    `message_temoignage` VARCHAR(1000) NOT NULL,
-    `date_temoignage` DATETIME(0) NOT NULL,
+CREATE TABLE temoignage_participant (
+    id_temoignage INTEGER NOT NULL,
+    id_participant INTEGER NOT NULL,
+    CONSTRAINT temoignage_participant_pkey PRIMARY KEY (id_temoignage, id_participant)
+);
 
-    PRIMARY KEY (`id_temoignage`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE INDEX temoignage_participant_id_participant_idx ON temoignage_participant (id_participant);
 
--- CreateTable
-CREATE TABLE `temoignage_participant` (
-    `id_temoignage` INTEGER NOT NULL,
-    `id_participant` INTEGER NOT NULL,
+ALTER TABLE assemblee
+    ADD CONSTRAINT assemblee_ibfk_1
+    FOREIGN KEY (id_participant) REFERENCES participant (id_participant)
+    ON DELETE NO ACTION ON UPDATE CASCADE;
 
-    INDEX `id_participant`(`id_participant`),
-    PRIMARY KEY (`id_temoignage`, `id_participant`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+ALTER TABLE participant_suivie
+    ADD CONSTRAINT participant_suivie_ibfk_1
+    FOREIGN KEY (id_suivie) REFERENCES suivie (id_suivie)
+    ON DELETE NO ACTION ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE `assemblee` ADD CONSTRAINT `assemblee_ibfk_1` FOREIGN KEY (`id_participant`) REFERENCES `participant`(`id_participant`) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE participant_suivie
+    ADD CONSTRAINT participant_suivie_ibfk_2
+    FOREIGN KEY (id_participant) REFERENCES participant (id_participant)
+    ON DELETE NO ACTION ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE `participant_suivie` ADD CONSTRAINT `participant_suivie_ibfk_1` FOREIGN KEY (`id_suivie`) REFERENCES `suivie`(`id_suivie`) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE temoignage_participant
+    ADD CONSTRAINT temoignage_participant_ibfk_1
+    FOREIGN KEY (id_temoignage) REFERENCES temoignage (id_temoignage)
+    ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE `participant_suivie` ADD CONSTRAINT `participant_suivie_ibfk_2` FOREIGN KEY (`id_participant`) REFERENCES `participant`(`id_participant`) ON DELETE NO ACTION ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `temoignage_participant` ADD CONSTRAINT `temoignage_participant_ibfk_1` FOREIGN KEY (`id_temoignage`) REFERENCES `temoignage`(`id_temoignage`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `temoignage_participant` ADD CONSTRAINT `temoignage_participant_ibfk_2` FOREIGN KEY (`id_participant`) REFERENCES `participant`(`id_participant`) ON DELETE NO ACTION ON UPDATE CASCADE;
-
--- MySQL 8.0.16+ enforces the same 1-to-21 range as the supplied SQL dump.
-ALTER TABLE `suivie` ADD CONSTRAINT `suivie_chk_1` CHECK (`jours_suivie` BETWEEN 1 AND 21);
+ALTER TABLE temoignage_participant
+    ADD CONSTRAINT temoignage_participant_ibfk_2
+    FOREIGN KEY (id_participant) REFERENCES participant (id_participant)
+    ON DELETE NO ACTION ON UPDATE CASCADE;

@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const bcrypt = require("bcryptjs");
 const { createApp } = require("../src/app");
+const { hashSessionToken } = require("../src/identity");
 
 // Le serveur simulé permet de vérifier les routes publiques sans base de données configurée.
 async function withServer(run) {
@@ -9,6 +10,12 @@ async function withServer(run) {
     $queryRaw: async () => [{ result: 1 }],
     participant: { count: async () => 4 },
     carte: { count: async () => 9 },
+    assembleeCatalogue: {
+      findMany: async ({ where }) => [
+        { idAssemblee: 1, nomAssemblee: "Assemblée active", villeAssemblee: "Ville active", actif: true },
+        { idAssemblee: 2, nomAssemblee: "Assemblée inactive", villeAssemblee: "Ville inactive", actif: false },
+      ].filter((item) => item.actif === where.actif),
+    },
     sessionAuth: { findUnique: async () => null },
   };
   const config = {
@@ -32,11 +39,12 @@ async function withServer(run) {
 
 test("site, événements de calendrier et statistiques n'exposent que les routes prévues", async () => {
   await withServer(async (origin) => {
-    const [site, metadata, stats, hiddenConfig] = await Promise.all([
+    const [site, metadata, stats, hiddenConfig, assemblies] = await Promise.all([
       fetch(`${origin}/admin`),
       fetch(`${origin}/api/meta`),
       fetch(`${origin}/api/stats`),
       fetch(`${origin}/package.json`),
+      fetch(`${origin}/api/assemblies`),
     ]);
 
     assert.equal(site.status, 200);
@@ -48,15 +56,19 @@ test("site, événements de calendrier et statistiques n'exposent que les routes
     });
 
     assert.deepEqual(await stats.json(), { participants: 4, cards: 9 });
+    assert.deepEqual(await assemblies.json(), {
+      items: [{ id: 1, name: "Assemblée active", city: "Ville active" }],
+    });
     assert.equal(hiddenConfig.status, 404);
   });
 });
 
 test("les sessions et les mutations refusent les accès anonymes et inter-origines", async () => {
   await withServer(async (origin) => {
-    const [privateCheckins, adminPanel, crossOrigin] = await Promise.all([
+    const [privateCheckins, adminPanel, anonymousTestimonial, crossOrigin] = await Promise.all([
       fetch(`${origin}/api/checkins`),
       fetch(`${origin}/api/admin/session`),
+      fetch(`${origin}/api/testimonials`, { method: "POST" }),
       fetch(`${origin}/api/engagements`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Origin: "https://site-inconnu.example" },
@@ -66,6 +78,8 @@ test("les sessions et les mutations refusent les accès anonymes et inter-origin
 
     assert.equal(privateCheckins.status, 401);
     assert.equal(adminPanel.status, 401);
+    assert.equal(anonymousTestimonial.status, 401);
+    assert.equal((await anonymousTestimonial.json()).error.message, "Veuillez créer une carte dans ce navigateur pour ouvrir votre session participant.");
     assert.equal(crossOrigin.status, 403);
   });
 });
@@ -75,6 +89,15 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
   const sessions = [];
   const engagements = [];
   const cards = [];
+  const admin = { idAdministrateur: 99 };
+  const legacyAdminToken = Buffer.alloc(32, 7).toString("base64url");
+  sessions.push({
+    idSession: 99,
+    empreinte: hashSessionToken(legacyAdminToken),
+    idAdministrateur: admin.idAdministrateur,
+    idParticipant: null,
+    dateExpiration: new Date(Date.now() + 60_000),
+  });
   let nextId = 1;
   const participantModel = {
     count: async () => participants.length,
@@ -112,6 +135,13 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
         return record;
       },
     },
+    assembleeCatalogue: {
+      findFirst: async ({ where }) => (
+        where.idAssemblee === 1 && where.actif
+          ? { nomAssemblee: "Assemblée de test", villeAssemblee: "Ville de test" }
+          : null
+      ),
+    },
     sessionAuth: {
       create: async ({ data }) => {
         const record = { idSession: nextId++, ...data };
@@ -123,8 +153,10 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
         return session
           ? {
               ...session,
-              participant: participants.find((item) => item.idParticipant === session.idParticipant),
-              administrateur: null,
+              participant: session.idParticipant
+                ? participants.find((item) => item.idParticipant === session.idParticipant)
+                : null,
+              administrateur: session.idAdministrateur ? admin : null,
             }
           : null;
       },
@@ -166,7 +198,7 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
       lastName: "Test",
       phone: "+243812345678",
       timeZone: "Africa/Kinshasa",
-      location: "Kinshasa",
+      assemblyId: 1,
       duration: 7,
       consent: true,
     };
@@ -178,15 +210,29 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
     assert.equal(invalidTimeZone.status, 400);
     assert.equal((await invalidTimeZone.json()).error.code, "INVALID_TIME_ZONE");
 
-    const firstCard = await fetch(`${origin}/api/engagements`, {
+    const invalidAssembly = await fetch(`${origin}/api/engagements`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, assemblyId: 99 }),
+    });
+    assert.equal(invalidAssembly.status, 400);
+    assert.equal((await invalidAssembly.json()).error.code, "INVALID_ASSEMBLY");
+
+    const firstCard = await fetch(`${origin}/api/engagements`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `offensive_admin_session=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA; offensive_session=${legacyAdminToken}`,
+      },
       body: JSON.stringify(form),
     });
     assert.equal(firstCard.status, 201);
+    assert.match(firstCard.headers.get("set-cookie"), /offensive_session=/i);
+    assert.match(firstCard.headers.get("set-cookie"), /Path=\//i);
     const created = await firstCard.json();
     assert.equal(participants.length, 1);
     assert.equal(engagements.length, 1);
+    assert.equal(engagements[0].lieu, "Assemblée de test — Ville de test");
     assert.equal(cards.length, 1);
 
     const sessionCookie = firstCard.headers.get("set-cookie").split(";")[0];
@@ -234,6 +280,8 @@ test("le compte administrateur se connecte avec un cookie HttpOnly", async () =>
     derniereConnexion: null,
   };
   const sessions = [];
+  const weeklyThemes = new Map();
+  const dailyContent = new Map();
   let nextId = 1;
   const prisma = {
     $queryRaw: async () => [{ result: 1 }],
@@ -262,6 +310,28 @@ test("le compte administrateur se connecte avec un cookie HttpOnly", async () =>
         return sessions.splice(index, 1)[0];
       },
     },
+    themeHebdomadaire: {
+      findMany: async ({ where } = {}) => Array.from(weeklyThemes.values())
+        .filter((item) => where?.publie === undefined || item.publie === where.publie),
+      upsert: async ({ where, create, update }) => {
+        const item = weeklyThemes.get(where.semaine) || { ...create };
+        Object.assign(item, weeklyThemes.has(where.semaine) ? update : {});
+        weeklyThemes.set(where.semaine, item);
+        return item;
+      },
+    },
+    contenuJournalier: {
+      findMany: async ({ where } = {}) => Array.from(dailyContent.values())
+        .filter((item) => where?.publie === undefined || item.publie === where.publie),
+      upsert: async ({ where, create, update }) => {
+        const item = dailyContent.get(where.jour) || { ...create };
+        Object.assign(item, dailyContent.has(where.jour) ? update : {});
+        dailyContent.set(where.jour, item);
+        return item;
+      },
+    },
+    temoignage: { findMany: async () => [], count: async () => 0 },
+    participant: { findMany: async () => [], count: async () => 0 },
     journalAdmin: { create: async () => ({ idAction: nextId++ }) },
   };
   const config = {
@@ -287,12 +357,77 @@ test("le compte administrateur se connecte avec un cookie HttpOnly", async () =>
     assert.equal(login.status, 200);
     assert.match(login.headers.get("set-cookie"), /HttpOnly/i);
     assert.match(login.headers.get("set-cookie"), /SameSite=Lax/i);
+    assert.match(login.headers.get("set-cookie"), /offensive_admin_session=/i);
+    assert.match(login.headers.get("set-cookie"), /Path=\/api\/admin/i);
     const cookie = login.headers.get("set-cookie").split(";")[0];
     const session = await fetch(`${origin}/api/admin/session`, { headers: { Cookie: cookie } });
     const sessionData = await session.json();
     assert.equal(session.status, 200, JSON.stringify({ cookie, sessionData }));
     assert.deepEqual(sessionData, {
       admin: { name: admin.nomAdministrateur, email: admin.emailAdministrateur },
+    });
+
+    const [testimonials, participants] = await Promise.all([
+      fetch(`${origin}/api/admin/testimonials`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: cookie },
+        body: JSON.stringify({ status: "TOUS", page: 1, search: "recherche de test" }),
+      }),
+      fetch(`${origin}/api/admin/participants`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: cookie },
+        body: JSON.stringify({ page: 1, search: "recherche de test" }),
+      }),
+    ]);
+    assert.equal(testimonials.status, 200);
+    assert.equal(participants.status, 200);
+    assert.deepEqual(await testimonials.json(), { items: [], page: 1, pageSize: 10, total: 0 });
+    assert.deepEqual(await participants.json(), { items: [], page: 1, pageSize: 20, total: 0 });
+
+    const editorResponse = await fetch(`${origin}/api/admin/devotional`, { headers: { Cookie: cookie } });
+    const editor = await editorResponse.json();
+    assert.equal(editorResponse.status, 200);
+    assert.equal(editor.weeks.length, 3);
+    assert.equal(editor.days.length, 21);
+    assert.equal(editor.days[0].published, false);
+
+    const emptyPublish = await fetch(`${origin}/api/admin/devotional/days/1`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ content: "", published: true }),
+    });
+    assert.equal(emptyPublish.status, 400);
+
+    const saveWeek = await fetch(`${origin}/api/admin/devotional/weeks/1`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ theme: "Thème saisi par l’équipe", published: true }),
+    });
+    assert.equal(saveWeek.status, 200);
+
+    const saveDay = await fetch(`${origin}/api/admin/devotional/days/1`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ content: "Contenu du jour", published: true }),
+    });
+    assert.equal(saveDay.status, 200);
+
+    const publicContent = await fetch(`${origin}/api/devotional`);
+    assert.deepEqual(await publicContent.json(), {
+      weeks: [{ week: 1, theme: "Thème saisi par l’équipe" }],
+      days: [{ day: 1, content: "Contenu du jour" }],
+    });
+
+    const unpublishDay = await fetch(`${origin}/api/admin/devotional/days/1`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: cookie },
+      body: JSON.stringify({ content: "Contenu du jour", published: false }),
+    });
+    assert.equal(unpublishDay.status, 200);
+    const afterUnpublish = await fetch(`${origin}/api/devotional`);
+    assert.deepEqual(await afterUnpublish.json(), {
+      weeks: [{ week: 1, theme: "Thème saisi par l’équipe" }],
+      days: [],
     });
   } finally {
     await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));

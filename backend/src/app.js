@@ -49,6 +49,7 @@ function createApp({ prisma, config }) {
   app.get("/script.js", (request, response) => sendFileFrom(response, "script.js"));
   app.get("/theme.js", (request, response) => sendFileFrom(response, "theme.js"));
   app.get("/liensCarte.json", (request, response) => sendFileFrom(response, "liensCarte.json"));
+  app.get(["/admin", "/admin/"], (request, response) => response.sendFile(path.join(backendPublic, "admin.html")));
   app.get("/aF4gJ9Lp8x", (request, response) => response.sendFile(path.join(backendPublic, "admin.html")));
   app.get("/admin.css", (request, response) => response.sendFile(path.join(backendPublic, "admin.css")));
   app.get("/admin.js", (request, response) => response.sendFile(path.join(backendPublic, "admin.js")));
