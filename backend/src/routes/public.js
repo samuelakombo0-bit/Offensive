@@ -240,7 +240,13 @@ function createPublicRouter({ prisma, config }) {
     const [items, total] = await Promise.all([
       prisma.temoignage.findMany({
         where: { statut: "APPROUVE" },
-        select: { idTemoignage: true, messageTemoignage: true, dateTemoignage: true, imagePrivee: true },
+        select: {
+          idTemoignage: true,
+          messageTemoignage: true,
+          dateTemoignage: true,
+          imagePrivee: true,
+          auteur: { select: { prenomParticipant: true, nomParticipant: true } },
+        },
         orderBy: { dateTemoignage: "desc" },
         skip: (page - 1) * pageSize,
         take: pageSize,
@@ -249,10 +255,11 @@ function createPublicRouter({ prisma, config }) {
     ]);
 
     response.json({
-      items: items.map(({ idTemoignage, messageTemoignage, dateTemoignage, imagePrivee }) => ({
+      items: items.map(({ idTemoignage, messageTemoignage, dateTemoignage, imagePrivee, auteur }) => ({
         id: idTemoignage,
         message: messageTemoignage,
         date: dateTemoignage,
+        authorName: auteur ? `${auteur.prenomParticipant} ${auteur.nomParticipant}` : null,
         imageUrl: imagePrivee ? `/api/testimonials/${idTemoignage}/image` : null,
       })),
       page,

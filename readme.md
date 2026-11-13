@@ -21,11 +21,10 @@ Le site public reste utilisable en HTML, CSS et JavaScript natifs, sans service 
 - Accueil avec thème, dates et compte à rebours.
 - Navigation adaptée au mobile et liens vers les sections.
 - Présentation de l’Offensive, de son ouverture à tous et de la vision « Implanter les églises ».
-- Section thème et livret avec aperçu visuel animé et contenu des 21 jours publié depuis le panneau administrateur.
 - Conseils de jeûne, avec contenus santé à compléter après validation médicale.
 - Formulaire qui génère un visuel téléchargeable, prépare un partage WhatsApp et, si le backend fonctionne, enregistre le participant, l’engagement et la carte.
 - Suivi des 21 jours sauvegardé localement en mode statique et synchronisé au compte participant lorsque le backend est actif.
-- Témoignages écrits ou avec image, conservés en attente avant validation et publication.
+- Témoignages écrits ou avec image, conservés dans PostgreSQL en attente de validation et publiés avec le nom de leur auteur après approbation.
 - Panneau administrateur pour les statistiques, la modération, les participants et le journal des actions.
 - Recherche dans la liste locale des assemblées de `liensCarte.json` et affichage de leur carte Google Maps à la sélection.
 - Téléchargement de l’affiche et des visuels présents dans le projet.
@@ -44,7 +43,7 @@ Le mode statique ne transmet aucune donnée. Le backend peut être lancé sépar
 - **Images :** seuls JPEG, PNG et WebP de 5 Mo maximum sont acceptés. Les images sont réencodées, gardées dans le dossier privé local et visibles dans le panneau ; une image n’est publique qu’après approbation du témoignage. Le stockage local est prévu pour le développement et doit être remplacé par un stockage privé persistant avant un déploiement multi-serveur.
 - **Administration :** l’interface fournit un seul rôle administrateur, une connexion par mot de passe haché, la modération, la recherche/pagination, les statistiques, un éditeur des 3 thèmes hebdomadaires et des 21 contenus quotidiens, ainsi qu’un journal. Chaque contenu peut rester en brouillon ou être publié. La création du compte se fait depuis le terminal, jamais depuis un formulaire public.
 - **Déploiement :** les limites de requêtes sont en mémoire et les fichiers sont sur disque local. Un déploiement à plusieurs instances nécessite un stockage partagé des limites et des fichiers. Utiliser HTTPS, `COOKIE_SECURE=true`, une base protégée et des sauvegardes.
-- **Livret :** les pensées ou versets des 21 jours et les trois thèmes hebdomadaires restent à fournir par les responsables ; ils sont saisis dans le panneau avant publication. Les informations d’achat ou de téléchargement restent à confirmer.
+- **Contenus des 21 jours :** les pensées ou versets et les trois thèmes hebdomadaires restent à fournir par les responsables et peuvent être saisis dans le panneau d’administration. La section publique thème et livret n’est pas affichée.
 - **Conseils santé :** les informations sur l’alimentation, les précautions et les cas particuliers doivent être validées par les médecins concernés avant publication.
 - **Assemblées :** le formulaire « Je m’engage » propose les assemblées actives de la table `assemblee_catalogue`. La recherche cartographique utilise encore `liensCarte.json`. Les adresses, horaires, contacts et référents manquants restent à fournir.
 - **Médias :** aucun contenu officiel n’est fourni par le backend ; il ne publie que les témoignages approuvés.
@@ -172,14 +171,13 @@ Permettre à toute personne, membre ou non, de comprendre l’Offensive, de s’
 
 1. **Accueil :** affiche officielle, thème, dates, compte à rebours et accès à l’engagement.
 2. **Comprendre l’Offensive :** définition, historique, ouverture à tous, vision et message du Président du Conseil.
-3. **Thème et livret :** présentation du livret, pensée ou verset quotidien, thèmes hebdomadaires et modalités d’accès au livret.
-4. **Conseils de jeûne :** repères spirituels, informations santé validées et cas particuliers.
-5. **Engagement :** formulaire simple, visuel à partager, compteur public et suivi des 21 jours.
-6. **Médias :** spot, vidéos, podcasts, réels, témoignages, interviews et récapitulatifs des assemblées.
-7. **Assemblées :** liste avec adresses, horaires, contacts et référents, ainsi qu’une carte.
-8. **Kit :** affiches, visuels pour WhatsApp, bannières, logos et textes à partager.
-9. **Témoignages :** textes, photos ou vidéos, après modération.
-10. **Informations pratiques :** contact, FAQ, réseaux sociaux et invitation à partager.
+3. **Conseils de jeûne :** repères spirituels, informations santé validées et cas particuliers.
+4. **Engagement :** formulaire simple, visuel à partager, compteur public et suivi des 21 jours.
+5. **Médias :** spot, vidéos, podcasts, réels, témoignages, interviews et récapitulatifs des assemblées.
+6. **Assemblées :** liste avec adresses, horaires, contacts et référents, ainsi qu’une carte.
+7. **Kit :** affiches, visuels pour WhatsApp, bannières, logos et textes à partager.
+8. **Témoignages :** textes, photos ou vidéos, publiés avec le nom de l’auteur après modération.
+9. **Informations pratiques :** contact, FAQ, réseaux sociaux et invitation à partager.
 
 ### Conditions de réalisation
 

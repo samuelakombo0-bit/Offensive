@@ -89,6 +89,7 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
   const sessions = [];
   const engagements = [];
   const cards = [];
+  const testimonials = [];
   const admin = { idAdministrateur: 99 };
   const legacyAdminToken = Buffer.alloc(32, 7).toString("base64url");
   sessions.push({
@@ -177,6 +178,24 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
       },
     },
     suiviJournalier: { findMany: async () => [] },
+    temoignage: {
+      create: async ({ data }) => {
+        const testimonial = {
+          idTemoignage: nextId++,
+          dateTemoignage: new Date(),
+          ...data,
+        };
+        testimonials.push(testimonial);
+        return { idTemoignage: testimonial.idTemoignage, statut: testimonial.statut };
+      },
+      findMany: async ({ where }) => testimonials
+        .filter((item) => item.statut === where.statut)
+        .map((item) => ({
+          ...item,
+          auteur: participants.find((participant) => participant.idParticipant === item.idParticipant) || null,
+        })),
+      count: async ({ where }) => testimonials.filter((item) => item.statut === where.statut).length,
+    },
   };
   const config = {
     cookieSecure: false,
@@ -265,6 +284,29 @@ test("la première carte crée un participant et le cookie le retrouve sans cré
     });
     assert.equal(duplicateWithoutSession.status, 409);
     assert.equal(participants.length, 1);
+
+    const testimonialForm = new FormData();
+    testimonialForm.append("message", "Mon témoignage de test.");
+    testimonialForm.append("publicationConsent", "on");
+    const submittedTestimonial = await fetch(`${origin}/api/testimonials`, {
+      method: "POST",
+      headers: { Cookie: sessionCookie },
+      body: testimonialForm,
+    });
+    assert.equal(submittedTestimonial.status, 201);
+    assert.equal(testimonials.length, 1);
+    assert.equal(testimonials[0].idParticipant, created.participantId);
+    assert.equal(testimonials[0].messageTemoignage, "Mon témoignage de test.");
+    assert.equal(testimonials[0].statut, "EN_ATTENTE");
+
+    const pendingTestimonials = await fetch(`${origin}/api/testimonials`);
+    assert.deepEqual((await pendingTestimonials.json()).items, []);
+
+    testimonials[0].statut = "APPROUVE";
+    const publishedTestimonials = await fetch(`${origin}/api/testimonials`);
+    const publishedResult = await publishedTestimonials.json();
+    assert.equal(publishedResult.items[0].message, "Mon témoignage de test.");
+    assert.equal(publishedResult.items[0].authorName, "Amina Test");
   } finally {
     await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
   }
