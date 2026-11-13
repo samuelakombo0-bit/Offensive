@@ -21,7 +21,7 @@ Le site public reste utilisable en HTML, CSS et JavaScript natifs, sans service 
 - Accueil avec thème, dates et compte à rebours.
 - Navigation adaptée au mobile et liens vers les sections.
 - Présentation de l’Offensive, de son ouverture à tous et de la vision « Implanter les églises ».
-- Section thème et livret avec aperçu visuel animé et emplacements pour les 21 jours.
+- Section thème et livret avec aperçu visuel animé et contenu des 21 jours publié depuis le panneau administrateur.
 - Conseils de jeûne, avec contenus santé à compléter après validation médicale.
 - Formulaire qui génère un visuel téléchargeable, prépare un partage WhatsApp et, si le backend fonctionne, enregistre le participant, l’engagement et la carte.
 - Suivi des 21 jours sauvegardé localement en mode statique et synchronisé au compte participant lorsque le backend est actif.
@@ -34,19 +34,19 @@ Le site public reste utilisable en HTML, CSS et JavaScript natifs, sans service 
 
 ## Limites du MVP et contenus à fournir
 
-Le mode statique ne transmet aucune donnée. Le backend peut être lancé séparément pour tester la collecte ; la base ne sera connectée que lorsqu’un administrateur aura configuré MySQL.
+Le mode statique ne transmet aucune donnée. Le backend peut être lancé séparément pour tester la collecte ; la base PostgreSQL doit être configurée dans `backend/.env`.
 
 - **Identité :** le numéro de téléphone est unique, mais n’est pas vérifié par SMS. Le cookie HttpOnly permet de retrouver le participant après fermeture du même navigateur ; si ses cookies sont effacés ou si la personne change d’appareil, elle ne peut pas récupérer le compte par le seul numéro. Cette récupération nécessite une vérification SMS qui n’est pas encore intégrée.
-- **Données personnelles :** le nom, le prénom et le numéro sont conservés dans MySQL avec le consentement du participant. Le sujet de prière reste local et n’est pas envoyé au serveur. Avant publication, valider et publier l’information de confidentialité et le responsable du traitement.
+- **Données personnelles :** le nom, le prénom et le numéro sont conservés dans PostgreSQL avec le consentement du participant. Le sujet de prière reste local et n’est pas envoyé au serveur. Avant publication, valider et publier l’information de confidentialité et le responsable du traitement.
 - **Conservation :** le consentement annonce une conservation jusqu’à la fin de l’Offensive. La purge globale n’est jamais automatique ; la commande décrite ci-dessous est bloquée avant la fin des 21 jours et exige une confirmation explicite.
 - **Engagements et cartes :** chaque création génère un enregistrement d’engagement et de carte ; un participant déjà reconnu dans son navigateur peut en créer plusieurs. Les compteurs publics affichent le nombre de participants et de cartes, pas le nombre d’assemblées.
 - **Suivi des jours :** l’unicité SQL empêche de compter plusieurs fois le même jour pour le même participant. Le serveur bloque les validations futures selon le fuseau IANA enregistré sur le compte. Pour l’instant, le formulaire reprend le fuseau du navigateur ; l’API internationale annoncée pourra ensuite proposer le choix du fuseau approprié.
 - **Images :** seuls JPEG, PNG et WebP de 5 Mo maximum sont acceptés. Les images sont réencodées, gardées dans le dossier privé local et visibles dans le panneau ; une image n’est publique qu’après approbation du témoignage. Le stockage local est prévu pour le développement et doit être remplacé par un stockage privé persistant avant un déploiement multi-serveur.
-- **Administration :** l’interface fournit un seul rôle administrateur, une connexion par mot de passe haché, la modération, la recherche/pagination, les statistiques et un journal. La création du compte se fait depuis le terminal, jamais depuis un formulaire public.
+- **Administration :** l’interface fournit un seul rôle administrateur, une connexion par mot de passe haché, la modération, la recherche/pagination, les statistiques, un éditeur des 3 thèmes hebdomadaires et des 21 contenus quotidiens, ainsi qu’un journal. Chaque contenu peut rester en brouillon ou être publié. La création du compte se fait depuis le terminal, jamais depuis un formulaire public.
 - **Déploiement :** les limites de requêtes sont en mémoire et les fichiers sont sur disque local. Un déploiement à plusieurs instances nécessite un stockage partagé des limites et des fichiers. Utiliser HTTPS, `COOKIE_SECURE=true`, une base protégée et des sauvegardes.
-- **Livret :** les pensées ou versets des 21 jours, les trois thèmes hebdomadaires et les informations d’achat ou de téléchargement restent à confirmer.
+- **Livret :** les pensées ou versets des 21 jours et les trois thèmes hebdomadaires restent à fournir par les responsables ; ils sont saisis dans le panneau avant publication. Les informations d’achat ou de téléchargement restent à confirmer.
 - **Conseils santé :** les informations sur l’alimentation, les précautions et les cas particuliers doivent être validées par les médecins concernés avant publication.
-- **Assemblées :** les noms et liens de carte sont stockés localement dans `liensCarte.json`. Les adresses, horaires, contacts et référents manquants restent à fournir.
+- **Assemblées :** le formulaire « Je m’engage » propose les assemblées actives de la table `assemblee_catalogue`. La recherche cartographique utilise encore `liensCarte.json`. Les adresses, horaires, contacts et référents manquants restent à fournir.
 - **Médias :** aucun contenu officiel n’est fourni par le backend ; il ne publie que les témoignages approuvés.
 - **Contact et réseaux :** les coordonnées générales et les liens officiels de l’Offensive restent à confirmer.
 
@@ -62,7 +62,7 @@ Ne pas publier de contenu officiel, de recommandation médicale ou de donnée ma
 | `script.js` | Interactions de la page |
 | `liensCarte.json` | Noms et liens d’intégration Google Maps des assemblées |
 | `backend/prisma/schema.prisma` | Modèle Prisma des tables existantes et des fonctions serveur |
-| `backend/prisma/migrations/` | Schéma de base issu du dump et migration des fonctions serveur |
+| `backend/prisma/migrations/` | Migrations PostgreSQL du schéma et des fonctions serveur, dont le livret |
 | `backend/server.js` | Démarrage du serveur Express |
 | `backend/src/` | API, sessions, modération, validation et stockage privé des images |
 | `backend/public/admin.html` | Interface du panneau administrateur |
@@ -74,22 +74,22 @@ Ne pas publier de contenu officiel, de recommandation médicale ou de donnée ma
 
 ## Modèle de données Prisma
 
-`backend/prisma/schema.prisma` utilise Prisma ORM 7.10.1 et le générateur JavaScript CommonJS. Il conserve les tables SQL historiques, et ajoute `engagement`, `carte`, `suivi_journalier`, les sessions, l’état de modération des témoignages et le journal administratif. Les migrations sont dans `backend/prisma/migrations/`.
+`backend/prisma/schema.prisma` utilise Prisma ORM 7.10.1 et le générateur JavaScript CommonJS. Il conserve les tables SQL historiques, et ajoute `engagement`, `carte`, `suivi_journalier`, les sessions, l’état de modération des témoignages, le journal administratif et les contenus du livret. Les migrations sont dans `backend/prisma/migrations/`.
 
-Le dump fourni décrit la structure MySQL 8.0.46 et ne contient aucune donnée. Les colonnes `participant.id_assembler` et `suivie.id_participant` historiques restent sans relation Prisma, comme dans le dump. Les nouvelles tables ont leurs propres clés étrangères et contraintes d’unicité. L’application n’a pas pu vérifier une base réellement connectée : `backend/.env` ne contient pas de connexion et aucune migration n’a été appliquée.
+`offensive.sql` est un ancien dump MySQL et ne doit pas être importé dans PostgreSQL. Pour PostgreSQL, le dépôt fournit `offensive_schema_complet_postgres.sql` et des migrations Prisma PostgreSQL. Les colonnes historiques `participant.id_assembler` et `suivie.id_participant` restent sans relation Prisma. Les nouvelles tables ont leurs propres clés étrangères et contraintes d’unicité.
 
 ## Utiliser le backend et le panneau
 
 ### Prérequis
 
 - Node.js 20.19 ou supérieur.
-- MySQL 8.0.16 ou supérieur ; le dump fourni a été produit avec MySQL 8.0.46.
-- Une base `offensive` créée localement et un utilisateur MySQL limité à cette base.
+- PostgreSQL 12 ou supérieur.
+- Une base `offensive` créée localement et un utilisateur PostgreSQL limité à cette base.
 
 ### Installation et configuration
 
 1. Copier les valeurs de `backend/.env.example` dans `backend/.env`. Si ce dernier existe déjà, compléter ses paramètres sans écraser ses secrets.
-2. Renseigner `DATABASE_URL` avec l’adresse, l’utilisateur, le mot de passe et le nom de la base MySQL.
+2. Renseigner `DATABASE_URL` avec une URL `postgresql://utilisateur:mot-de-passe@hôte:5432/offensive`. Encoder les caractères spéciaux du mot de passe selon le format URL.
 3. `EVENT_TIME_ZONE="UTC"` sert uniquement de valeur de repli pour les comptes historiques sans fuseau enregistré. Les nouveaux comptes conservent leur fuseau IANA détecté par le navigateur lors de la création de carte. L’intégration de l’API internationale des fuseaux reste en attente de son URL et de son format.
 4. Depuis la racine du dépôt, exécuter :
 
@@ -104,10 +104,19 @@ npm run prisma:generate
 
 Choisir **une seule** des deux méthodes :
 
-- **Base MySQL vide :** créer la base `offensive`, puis depuis `backend/` exécuter `npm run prisma:deploy`. Les migrations construisent d’abord le schéma correspondant au dump, puis ajoutent les fonctions du backend.
-- **Base déjà créée avec `offensive.sql` :** effectuer une sauvegarde et vérifier que son schéma correspond bien au dump, puis depuis `backend/` exécuter `npx prisma migrate resolve --applied 20261112103000_offensive_baseline --schema prisma/schema.prisma --config prisma.config.ts`, puis `npm run prisma:deploy`. Cette commande indique à Prisma que le schéma historique existe déjà ; elle ne doit pas être exécutée sur une base vide.
+- **Base PostgreSQL vide :** créer la base `offensive`, puis depuis `backend/` exécuter `npm run prisma:deploy`. Les migrations PostgreSQL créent le schéma et les fonctionnalités du backend.
+- **Base déjà créée avec la version actuelle de `offensive_schema_complet_postgres.sql` :** effectuer une sauvegarde et vérifier que le script a été exécuté avec succès. Comme ce script crée déjà le schéma complet, marquer les quatre migrations comme appliquées depuis `backend/` :
 
-Ne pas importer `offensive.sql` puis exécuter la migration de base sans l’avoir marquée comme appliquée : ses tables existent déjà. Ne pas utiliser une base contenant des modifications non vérifiées. La migration de fonctions ajoute notamment les contraintes, index et tables d’engagement ; sauvegarder la base avant toute évolution.
+```powershell
+npx prisma migrate resolve --applied 20261112103000_offensive_baseline --schema prisma/schema.prisma --config prisma.config.ts
+npx prisma migrate resolve --applied 20261112103100_backend_features --schema prisma/schema.prisma --config prisma.config.ts
+npx prisma migrate resolve --applied 20261112103200_assemblee_catalogue --schema prisma/schema.prisma --config prisma.config.ts
+npx prisma migrate resolve --applied 20261113000000_programme_21_jours --schema prisma/schema.prisma --config prisma.config.ts
+```
+
+Pour une base existante créée avec une version antérieure du script, vérifier les tables avant toute action. Si `assemblee_catalogue` existe déjà mais que les tables du programme des 21 jours n’existent pas, marquer les trois premières migrations comme appliquées, puis exécuter `npm run prisma:deploy`. Si le catalogue n’existe pas non plus, ne pas marquer sa migration comme appliquée : `npm run prisma:deploy` doit la créer avant les tables du programme.
+
+Ne pas importer l’ancien `offensive.sql` (dump MySQL) dans PostgreSQL. Ne pas lancer `prisma migrate deploy` après l’import du schéma PostgreSQL complet sans avoir marqué les migrations déjà présentes comme appliquées. Ne pas utiliser une base contenant des modifications non vérifiées ; sauvegarder la base avant toute évolution.
 
 ### Créer l’administrateur et lancer le site
 
@@ -126,19 +135,23 @@ La première commande demande un nom, une adresse et deux saisies masquées du m
 
 | Route | Usage |
 | --- | --- |
-| `GET /api/health` | Vérifie la connexion MySQL |
+| `GET /api/health` | Vérifie la connexion PostgreSQL |
 | `GET /api/meta` | Renvoie la date de départ, le fuseau et la durée de l’événement |
 | `GET /api/me` | Vérifie la session participant du navigateur courant |
 | `POST /api/engagements` | Crée le participant à la première carte, puis les engagements/cartes suivants |
+| `GET /api/assemblies` | Renvoie uniquement les assemblées actives du catalogue pour le formulaire |
 | `GET /api/stats` | Renvoie uniquement les nombres publics participants/cartes |
+| `GET /api/devotional` | Renvoie uniquement les thèmes et contenus des jours publiés |
 | `GET /api/checkins` · `POST /api/checkins` · `DELETE /api/checkins/:day` | Lit, valide ou retire un jour pour le participant connecté |
 | `POST /api/testimonials` | Soumet un témoignage et une image facultative en attente |
 | `GET /api/testimonials` | Liste uniquement les témoignages approuvés |
 | `/api/admin/*` | Connexion et opérations réservées au panneau administrateur |
 
+Le panneau édite et publie indépendamment le thème de chaque semaine et le contenu de chacun des 21 jours. Les contenus non publiés ne sont jamais renvoyés par l’API publique. Le fuseau horaire du participant est détecté automatiquement par le navigateur ; aucun champ manuel n’est affiché.
+
 ### Sessions, modération et données
 
-- Le navigateur reçoit un cookie `HttpOnly`, `SameSite=Lax`, persistant 30 jours et renouvelé lorsqu’il est utilisé. Seule l’empreinte du jeton aléatoire est stockée en MySQL ; les sessions expirées sont nettoyées chaque heure.
+- Le navigateur reçoit un cookie `HttpOnly`, `SameSite=Lax`, persistant 30 jours et renouvelé lorsqu’il est utilisé. Seule l’empreinte du jeton aléatoire est stockée en PostgreSQL ; les sessions expirées sont nettoyées chaque heure.
 - Chaque compte participant conserve son fuseau IANA. Le navigateur le détecte au premier engagement ; une prochaine intégration de l’API des pays pourra proposer les fuseaux pertinents, notamment lorsque le pays a plusieurs zones horaires. Aucune API externe n’est encore appelée.
 - Le téléphone est une clé unique, **pas une preuve d’identité**. Si un numéro existe mais que le navigateur ne possède plus sa session, le serveur refuse de rattacher ce compte. La récupération sûre après perte de cookie ou changement d’appareil attend l’ajout d’un code SMS ; ne pas remplacer ce contrôle par une simple recherche de téléphone.
 - La soumission d’un témoignage nécessite une session participant obtenue après la création d’une carte. Les images restent privées jusqu’à approbation ; le panneau permet d’éditer, approuver, refuser ou supprimer les témoignages et de rechercher, modifier ou supprimer les participants.
@@ -147,7 +160,7 @@ La première commande demande un nom, une adresse et deux saisies masquées du m
 
 ### Tests et limites de vérification
 
-Depuis `backend/`, lancer `npm test` pour les tests unitaires et HTTP sans base de données. `npm run prisma:validate` valide le modèle. La connexion à une base réelle, l’application des migrations et le parcours complet d’administration restent à vérifier après configuration de `DATABASE_URL`.
+Depuis `backend/`, lancer `npm test` pour les tests unitaires et HTTP sans base de données. `npm run prisma:validate` valide le modèle ; `GET /api/health` vérifie la connexion PostgreSQL configurée. Les migrations peuvent être appliquées sur une base vide avec `npm run prisma:deploy`.
 
 ## Cahier des charges
 

@@ -734,6 +734,8 @@ button:focus-visible {
   font-size: clamp(24px, 4vw, 32px);
 }
 
+.devotional-status:empty { display: none; }
+
 .week-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -780,10 +782,9 @@ button:focus-visible {
 }
 
 .daily-readings li {
-  display: flex;
-  min-height: 36px;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
   gap: 8px;
   padding: 6px 9px;
   border-radius: 5px;
@@ -799,6 +800,9 @@ button:focus-visible {
 
 .daily-readings li span:last-child {
   color: #68728a;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .fasting-section {
@@ -889,7 +893,7 @@ button:focus-visible {
   border-top: 4px solid var(--gold);
 }
 
-.fasting-card  {
+.fasting-note {
   margin: 0;
   padding: 12px;
   border-radius: 6px;
@@ -897,6 +901,10 @@ button:focus-visible {
   color: #604900;
   font-size: 14px;
   font-weight: 700;
+}
+
+.fasting-warning {
+  border-left: 3px solid #8a6500;
 }
 .engagement-section,
 .media-section {
@@ -965,7 +973,8 @@ button:focus-visible {
 }
 
 .engagement-form input,
-.engagement-form textarea {
+.engagement-form textarea,
+.engagement-form select {
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
@@ -982,7 +991,8 @@ button:focus-visible {
 }
 
 .engagement-form input:focus-visible,
-.engagement-form textarea:focus-visible {
+.engagement-form textarea:focus-visible,
+.engagement-form select:focus-visible {
   outline: 3px solid rgb(33 70 179 / 32%);
   outline-offset: 1px;
   border-color: var(--royal-blue);
@@ -2248,6 +2258,7 @@ button:focus-visible {
 [data-theme="dark"] .assembly-search,
 [data-theme="dark"] .engagement-form input,
 [data-theme="dark"] .engagement-form textarea,
+[data-theme="dark"] .engagement-form select,
 [data-theme="dark"] .testimonials-form textarea,
 [data-theme="dark"] .testimonials-form input[type="file"] {
   border-color: #53617a;
@@ -2401,6 +2412,12 @@ button:focus-visible {
 }
 
 [data-theme="dark"] .fasting-card .medical-validation {
+  background: #3a321b;
+  color: #ffdf83;
+}
+
+[data-theme="dark"] .fasting-card > p.fasting-note {
+  border-color: #a98c3f;
   background: #3a321b;
   color: #ffdf83;
 }
