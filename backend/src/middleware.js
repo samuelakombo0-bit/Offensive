@@ -33,7 +33,7 @@ function createAuthentication(database, config) {
 // Les routes publiques peuvent utiliser la session courante mais ne l'exigent pas toutes.
 function requireParticipant(request, response, next) {
   if (request.identity?.kind !== "participant") {
-    return next(new AppError(401, "PARTICIPANT_SESSION_REQUIRED", "Créez une carte dans ce navigateur pour ouvrir votre session participant."));
+    return next(new AppError(401, "PARTICIPANT_SESSION_REQUIRED", "Veuillez créer une carte dans ce navigateur pour ouvrir votre session participant."));
   }
   return next();
 }

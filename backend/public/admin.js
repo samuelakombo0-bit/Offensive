@@ -133,9 +133,12 @@ async function loadTestimonials(page = 1) {
   const pagination = document.querySelector("#testimonial-pagination");
   const status = document.querySelector("#testimonial-status-filter").value;
   const search = document.querySelector("#testimonial-search").value.trim();
-  const params = new URLSearchParams({ status, page: String(page), search });
   try {
-    const result = await adminApi(`/api/admin/testimonials?${params}`);
+    const result = await adminApi("/api/admin/testimonials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status, page, search }),
+    });
     testimonialPage = result.page;
     if (result.items.length === 0) {
       renderEmpty(list, "Aucun témoignage ne correspond à ce filtre.");
@@ -206,9 +209,12 @@ async function loadParticipants(page = 1) {
   const list = document.querySelector("#participant-list");
   const pagination = document.querySelector("#participant-pagination");
   const search = document.querySelector("#participant-search").value.trim();
-  const params = new URLSearchParams({ page: String(page), search });
   try {
-    const result = await adminApi(`/api/admin/participants?${params}`);
+    const result = await adminApi("/api/admin/participants", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ page, search }),
+    });
     participantPage = result.page;
     if (result.items.length === 0) {
       const row = document.createElement("tr");
@@ -241,6 +247,7 @@ async function loadParticipants(page = 1) {
       checkinsCell.textContent = String(participant.checkins);
       createdCell.textContent = dateFormat.format(new Date(participant.createdAt));
       form.className = "participant-edit";
+      form.method = "post";
       firstName.setAttribute("aria-label", "Prénom");
       firstName.value = participant.firstName;
       lastName.setAttribute("aria-label", "Nom");
@@ -322,13 +329,123 @@ async function loadAudit(page = 1) {
   }
 }
 
+function createDevotionalForm({ id, labelText, value, published, field, url, maxLength, rows }) {
+  const form = document.createElement("form");
+  const label = document.createElement("label");
+  const textarea = document.createElement("textarea");
+  const controls = document.createElement("div");
+  const publishLabel = document.createElement("label");
+  const checkbox = document.createElement("input");
+  const button = document.createElement("button");
+  const status = document.createElement("span");
+
+  form.className = "devotional-item-form";
+  form.method = "post";
+  label.htmlFor = `${id}-content`;
+  label.textContent = labelText;
+  textarea.id = `${id}-content`;
+  textarea.name = field;
+  textarea.rows = rows;
+  textarea.maxLength = maxLength;
+  textarea.value = value;
+  checkbox.type = "checkbox";
+  checkbox.id = `${id}-published`;
+  checkbox.checked = published;
+  publishLabel.htmlFor = checkbox.id;
+  publishLabel.append(checkbox, document.createTextNode(" Publier sur le site"));
+  controls.className = "devotional-form-controls";
+  button.type = "submit";
+  button.className = "button button-secondary";
+  button.textContent = "Enregistrer";
+  status.className = "devotional-item-status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  controls.append(publishLabel, button);
+  form.append(label, textarea, controls, status);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    button.disabled = true;
+    status.textContent = "Enregistrement…";
+    try {
+      const result = await adminApi(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: textarea.value, published: checkbox.checked }),
+      });
+      status.textContent = result.published ? "Publié sur le site." : "Enregistré en brouillon.";
+      showMessage(globalStatus, `${labelText} enregistré.`);
+    } catch (error) {
+      status.textContent = `Enregistrement impossible : ${error.message}`;
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  return form;
+}
+
+async function loadDevotionalEditor() {
+  const editor = document.querySelector("#devotional-editor");
+  const status = document.querySelector("#devotional-editor-status");
+  try {
+    const result = await adminApi("/api/admin/devotional");
+    const weeks = result.weeks.map((week) => {
+      const firstDay = (week.week - 1) * 7 + 1;
+      const card = document.createElement("article");
+      const heading = document.createElement("h3");
+      const range = document.createElement("p");
+      const themeForm = createDevotionalForm({
+        id: `week-${week.week}`,
+        labelText: "Thème de la semaine",
+        value: week.theme,
+        published: week.published,
+        field: "theme",
+        url: `/api/admin/devotional/weeks/${week.week}`,
+        maxLength: 240,
+        rows: 2,
+      });
+      const days = document.createElement("div");
+      const weekDays = result.days.filter((day) => day.day >= firstDay && day.day < firstDay + 7);
+
+      card.className = "devotional-week-editor";
+      heading.textContent = `Semaine ${week.week}`;
+      range.textContent = `Jours ${firstDay} à ${firstDay + 6}`;
+      range.className = "devotional-week-range";
+      days.className = "devotional-day-list";
+      card.append(heading, range, themeForm);
+
+      weekDays.forEach((day) => {
+        const dayForm = createDevotionalForm({
+          id: `day-${day.day}`,
+          labelText: `Jour ${day.day} — pensée ou verset`,
+          value: day.content,
+          published: day.published,
+          field: "content",
+          url: `/api/admin/devotional/days/${day.day}`,
+          maxLength: 3000,
+          rows: 3,
+        });
+        days.append(dayForm);
+      });
+
+      card.append(days);
+      return card;
+    });
+    editor.replaceChildren(...weeks);
+    status.textContent = "";
+  } catch (error) {
+    status.textContent = `Impossible de charger le programme : ${error.message}`;
+  }
+}
+
 // Une session est vérifiée par le serveur avant d'afficher les données confidentielles du panneau.
 async function showDashboard(admin) {
   loginPanel.hidden = true;
   dashboard.hidden = false;
   adminAccount.hidden = false;
   document.querySelector("#admin-name").textContent = `${admin.name} · ${admin.email}`;
-  await Promise.all([loadDashboard(), loadTestimonials(), loadParticipants(), loadAudit()]);
+  await Promise.all([loadDashboard(), loadTestimonials(), loadParticipants(), loadAudit(), loadDevotionalEditor()]);
 }
 
 loginForm.addEventListener("submit", async (event) => {

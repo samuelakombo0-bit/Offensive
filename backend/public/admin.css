@@ -17,7 +17,8 @@ body {
 
 button,
 input,
-select { font: inherit; }
+select,
+textarea { font: inherit; }
 
 a { color: #2146b3; }
 
@@ -136,7 +137,8 @@ a { color: #2146b3; }
 
 .button:focus-visible,
 input:focus-visible,
-select:focus-visible {
+select:focus-visible,
+textarea:focus-visible {
   outline: 3px solid rgb(33 70 179 / 32%);
   outline-offset: 2px;
 }
@@ -226,6 +228,92 @@ select:focus-visible {
 .content-panel {
   margin-top: 20px;
   padding: clamp(18px, 3vw, 28px);
+}
+
+.devotional-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.devotional-week-editor {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #e0e5ef;
+  border-radius: 10px;
+  background: #fbfcff;
+}
+
+.devotional-week-editor h3 {
+  margin: 0;
+  color: #183a91;
+  font-size: 19px;
+}
+
+.devotional-week-range {
+  margin: 4px 0 16px;
+  color: #59637a;
+  font-size: 14px;
+}
+
+.devotional-item-form {
+  display: grid;
+  gap: 8px;
+}
+
+.devotional-item-form > label:first-child {
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.devotional-item-form textarea {
+  width: 100%;
+  min-height: 74px;
+  padding: 10px;
+  border: 1px solid #b9c1d2;
+  border-radius: 6px;
+  color: #17233a;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.devotional-form-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.devotional-form-controls label {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  color: #3d4960;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.devotional-form-controls input { width: 18px; height: 18px; }
+
+.devotional-item-status {
+  min-height: 1.4em;
+  color: #59637a;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.devotional-day-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.devotional-day-list .devotional-item-form {
+  padding-top: 12px;
+  border-top: 1px solid #e0e5ef;
 }
 
 .section-heading {
@@ -378,6 +466,7 @@ td { font-size: 14px; }
   .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .chart-item { grid-template-columns: 48px minmax(0, 1fr) 34px; gap: 5px; font-size: 11px; }
   .section-heading { align-items: stretch; flex-direction: column; }
+  .devotional-editor-grid { grid-template-columns: minmax(0, 1fr); }
   .search-form { display: grid; grid-template-columns: 1fr auto; }
   .search-form select { grid-column: 1 / -1; }
   .search-form input { min-width: 0; width: 100%; }

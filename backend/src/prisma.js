@@ -1,16 +1,10 @@
 const { PrismaClient } = require("./generated/prisma");
-const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
+const { PrismaPg } = require("@prisma/adapter-pg");
 
-// Prisma ORM 7 utilise l'adaptateur MariaDB/MySQL pour les connexions directes en JavaScript.
+// Prisma ORM 7 utilise l'adaptateur PostgreSQL pour les connexions directes en JavaScript.
 function createPrismaClient(databaseUrl) {
-  const connection = new URL(databaseUrl);
-  const adapter = new PrismaMariaDb({
-    host: connection.hostname,
-    port: Number(connection.port || 3306),
-    user: decodeURIComponent(connection.username),
-    password: decodeURIComponent(connection.password),
-    database: decodeURIComponent(connection.pathname.slice(1)),
-    connectionLimit: 5,
+  const adapter = new PrismaPg({
+    connectionString: databaseUrl,
   });
 
   return new PrismaClient({ adapter });
