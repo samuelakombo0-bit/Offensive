@@ -11,3 +11,4 @@ Desktop.ini
 affiche-offensive-2026.png
 node_modules/
 .env/
+.env.example/

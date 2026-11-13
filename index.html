@@ -162,6 +162,7 @@
         <div class="devotional-heading">
           <h3>Les 21 jours</h3>
           <p>Les pensées et références bibliques officielles seront publiées ici.</p>
+          <p class="devotional-status" id="devotional-status" role="status" aria-live="polite"></p>
         </div>
 
         <div class="week-grid">
@@ -316,7 +317,7 @@
         </header>
 
         <div class="engagement-grid">
-          <form class="engagement-form" id="engagement-form">
+          <form class="engagement-form" id="engagement-form" method="post">
             <label for="participant-first-name">Prénom</label>
             <input id="participant-first-name" name="firstName" type="text" autocomplete="given-name" maxlength="100" required>
 
@@ -327,12 +328,11 @@
             <input id="participant-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="50" required aria-describedby="phone-help">
             <small id="phone-help">Gardez le même numéro et le même navigateur pour réutiliser le compte. Si les cookies sont effacés ou si vous changez d’appareil, la récupération par SMS n’est pas encore disponible.</small>
 
-            <label for="participant-time-zone">Fuseau horaire</label>
-            <input id="participant-time-zone" name="timeZone" type="text" autocomplete="off" maxlength="64" required aria-describedby="time-zone-help">
-            <small id="time-zone-help">Prérempli par le navigateur et conservé avec votre compte. Vérifiez-le si vous vous trouvez dans une autre région. Les fuseaux des autres pays seront ajoutés à partir de l’API officielle lorsqu’elle sera disponible.</small>
-
-            <label for="participant-location">Assemblée ou ville</label>
-            <input id="participant-location" name="location" type="text" autocomplete="address-level2" maxlength="80" required>
+            <label for="participant-assembly">Assemblée</label>
+            <select id="participant-assembly" name="assemblyId" required disabled aria-describedby="assembly-help">
+              <option value="">Chargement des assemblées…</option>
+            </select>
+            <small id="assembly-help">Choisissez une assemblée dans la liste disponible.</small>
 
             <label for="fasting-duration">Durée choisie (en jours)</label>
             <input id="fasting-duration" name="duration" type="number" min="1" max="21" step="1" inputmode="numeric" required aria-describedby="duration-help">
@@ -453,7 +453,7 @@
         </header>
 
         <div class="testimonials-layout">
-          <form class="testimonials-form" id="testimonial-form">
+          <form class="testimonials-form" id="testimonial-form" method="post">
             <h3>Soumettre un témoignage</h3>
             <p>Créez d’abord une carte dans ce navigateur pour ouvrir une session participant. Chaque témoignage sera relu par l’administrateur avant publication.</p>
             <label for="testimonial-message">Votre témoignage</label>

@@ -3,32 +3,92 @@ async function requestApi(url, options = {}) {
   let response;
   try {
     response = await fetch(url, { credentials: "same-origin", ...options });
-  } catch {
-    const localServerHint = ["localhost", "127.0.0.1"].includes(window.location.hostname)
-      && window.location.port !== "3000"
-      ? " Pour ce projet, démarrez le backend puis ouvrez http://localhost:3000 (pas Live Server)."
-      : " Vérifiez que le backend Express est démarré.";
-    throw new Error(`Impossible de joindre l’API.${localServerHint}`);
+  } catch (error) {
+    console.error("La requête vers le service n’a pas abouti.", error);
+    throw new Error("Le service est momentanément indisponible. Réessayez plus tard.");
   }
 
   let payload = null;
   if (response.status !== 204) {
     const contentType = response.headers.get("content-type") || "";
     if (!contentType.toLowerCase().includes("json")) {
-      throw new Error(
-        `L’API a répondu en HTTP ${response.status} avec le type « ${contentType || "inconnu"} » au lieu de JSON (${response.url}). Ouvrez le site sur http://localhost:3000 et vérifiez que le backend Express est démarré.`,
-      );
+      console.error("Réponse inattendue du service.", { status: response.status, contentType, url: response.url });
+      throw new Error("Le service est momentanément indisponible. Réessayez plus tard.");
     }
 
     try {
       payload = await response.json();
-    } catch {
-      throw new Error(`L’API a répondu en HTTP ${response.status}, mais son JSON est invalide (${response.url}).`);
+    } catch (error) {
+      console.error("La réponse du service n’est pas un JSON valide.", { status: response.status, url: response.url, error });
+      throw new Error("Une erreur est survenue pendant le chargement. Réessayez plus tard.");
     }
   }
-  if (!response.ok) throw new Error(payload?.error?.message || "La requête n’a pas abouti.");
+  if (!response.ok) {
+    console.error("La requête vers le service a échoué.", {
+      status: response.status,
+      code: payload?.error?.code,
+      url: response.url,
+    });
+    throw new Error(payload?.error?.message || "La requête n’a pas abouti.");
+  }
   return payload;
 }
+
+async function loadEngagementAssemblies() {
+  const select = document.querySelector("#participant-assembly");
+  const help = document.querySelector("#assembly-help");
+  try {
+    const result = await requestApi("/api/assemblies");
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Sélectionnez une assemblée";
+    const options = result.items.map((assembly) => {
+      const option = document.createElement("option");
+      option.value = String(assembly.id);
+      option.textContent = `${assembly.name} — ${assembly.city}`;
+      return option;
+    });
+    select.replaceChildren(placeholder, ...options);
+    select.disabled = options.length === 0;
+    help.textContent = options.length
+      ? "Choisissez une assemblée dans la liste disponible."
+      : "Aucune assemblée n’est disponible pour le moment.";
+  } catch (error) {
+    console.error("La liste des assemblées du formulaire n’a pas pu être chargée.", error);
+    const unavailable = document.createElement("option");
+    unavailable.value = "";
+    unavailable.textContent = "Liste temporairement indisponible";
+    select.replaceChildren(unavailable);
+    select.disabled = true;
+    help.textContent = "Le service des assemblées n’a pas répondu. Ouvrez le site depuis le serveur de l’application, puis actualisez la page.";
+  }
+}
+
+loadEngagementAssemblies();
+
+async function loadPublishedDevotional() {
+  const status = document.querySelector("#devotional-status");
+  try {
+    const result = await requestApi("/api/devotional");
+    const themes = new Map(result.weeks.map((week) => [week.week, week.theme]));
+    const contents = new Map(result.days.map((day) => [day.day, day.content]));
+
+    document.querySelectorAll(".week-card").forEach((card, weekIndex) => {
+      const week = weekIndex + 1;
+      const theme = card.querySelector(".week-theme");
+      theme.textContent = themes.get(week) || "Thème hebdomadaire à confirmer";
+
+      card.querySelectorAll(".daily-readings li").forEach((entry, dayIndex) => {
+        const day = weekIndex * 7 + dayIndex + 1;
+        entry.lastElementChild.textContent = contents.get(day) || "À publier";
+      });
+    });
+  } catch (error) {
+    status.textContent = `Le programme des 21 jours n’a pas pu être chargé : ${error.message}`;
+  }
+}
+
+loadPublishedDevotional();
 
 const menuToggle = document.querySelector(".menu-toggle");
     const navigation = document.querySelector(".primary-navigation");
@@ -89,7 +149,8 @@ const menuToggle = document.querySelector(".menu-toggle");
       try {
         localStorage.setItem("offensive-theme", nextTheme);
       } catch (error) {
-        themeStatus.textContent = `Le thème est modifié, mais la préférence n’a pas pu être mémorisée : ${error.message}`;
+        console.error("La préférence de thème n’a pas pu être mémorisée.", error);
+        themeStatus.textContent = "Le thème a changé, mais ce choix ne peut pas être mémorisé sur cet appareil.";
       }
     });
 
@@ -223,9 +284,10 @@ const menuToggle = document.querySelector(".menu-toggle");
         if (!assemblyLocations.length) throw new Error("Aucune entrée Google Maps valide n’a été trouvée.");
         renderAssemblyList();
       } catch (error) {
+        console.error("La liste cartographique des assemblées n’a pas pu être chargée.", error);
         assemblyEmpty.hidden = false;
-        assemblyEmpty.textContent = "La liste n’a pas pu être chargée. Ouvrez le site avec Live Server pour lire le fichier JSON.";
-        assemblySearchStatus.textContent = `Chargement impossible : ${error.message}`;
+        assemblyEmpty.textContent = "Les informations des assemblées sont momentanément indisponibles.";
+        assemblySearchStatus.textContent = "Impossible de charger les informations cartographiques pour le moment.";
       }
     }
 
@@ -244,7 +306,9 @@ const menuToggle = document.querySelector(".menu-toggle");
     const shareStatus = document.querySelector("#share-status");
     const kitWhatsappInvite = document.querySelector("#kit-whatsapp-invite");
 
-    kitWhatsappInvite.href = `https://wa.me/?text=${encodeURIComponent(invitationMessage)}`;
+    if (kitWhatsappInvite) {
+      kitWhatsappInvite.href = `https://wa.me/?text=${encodeURIComponent(invitationMessage)}`;
+    }
 
     async function copyInvitation() {
       if (navigator.clipboard && window.isSecureContext) {
@@ -264,15 +328,19 @@ const menuToggle = document.querySelector(".menu-toggle");
       if (!copied) throw new Error("Le navigateur n’a pas autorisé la copie.");
     }
 
-    document.querySelector("[data-copy-invitation]").addEventListener("click", async () => {
-      copyStatus.textContent = "";
-      try {
-        await copyInvitation();
-        copyStatus.textContent = "Texte d’invitation copié.";
-      } catch (error) {
-        copyStatus.textContent = `Impossible de copier le texte : ${error.message}`;
-      }
-    });
+    const copyInvitationButton = document.querySelector("[data-copy-invitation]");
+    if (copyInvitationButton && copyStatus) {
+      copyInvitationButton.addEventListener("click", async () => {
+        copyStatus.textContent = "";
+        try {
+          await copyInvitation();
+          copyStatus.textContent = "Texte d’invitation copié.";
+        } catch (error) {
+          console.error("Le texte d’invitation n’a pas pu être copié.", error);
+          copyStatus.textContent = "Impossible de copier le texte. Vous pouvez le sélectionner et le copier manuellement.";
+        }
+      });
+    }
 
     document.querySelector("[data-share-invitation]").addEventListener("click", () => {
       shareStatus.textContent = "Ouverture de WhatsApp avec le texte d’invitation. L’adresse du site sera incluse une fois le site publié.";
@@ -282,12 +350,12 @@ const menuToggle = document.querySelector(".menu-toggle");
     const engagementForm = document.querySelector("#engagement-form");
     const engagementStatus = document.querySelector("#engagement-status");
     const engagementResult = document.querySelector("#engagement-result");
+    const assemblySelect = document.querySelector("#participant-assembly");
     const engagementCanvas = document.querySelector("#engagement-canvas");
     const downloadCard = document.querySelector("#download-card");
     const shareCard = document.querySelector("#share-card");
     let cardImageUrl = "";
-    const timeZoneField = document.querySelector("#participant-time-zone");
-    timeZoneField.value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+    const detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
     function drawWrappedText(context, text, x, y, maxWidth, lineHeight) {
       const lines = [];
@@ -331,12 +399,13 @@ const menuToggle = document.querySelector(".menu-toggle");
       const firstName = String(formData.get("firstName") || "").trim();
       const lastName = String(formData.get("lastName") || "").trim();
       const phone = String(formData.get("phone") || "").trim();
-      const location = String(formData.get("location") || "").trim();
+      const assemblyId = Number(formData.get("assemblyId"));
+      const location = assemblySelect.selectedOptions[0]?.textContent.trim() || "";
       const duration = Number(formData.get("duration"));
       const fullName = `${firstName} ${lastName}`.trim();
 
-      if (!firstName || !lastName || !phone || !location || !Number.isInteger(duration) || duration < 1 || duration > 21) {
-        engagementStatus.textContent = "Vérifiez votre nom, votre prénom, votre téléphone, votre assemblée ou ville et une durée de 1 à 21 jours.";
+      if (!firstName || !lastName || !phone || !Number.isInteger(assemblyId) || assemblyId < 1 || !location || !Number.isInteger(duration) || duration < 1 || duration > 21) {
+        engagementStatus.textContent = "Vérifiez votre nom, votre prénom, votre téléphone, votre assemblée et une durée de 1 à 21 jours.";
         return;
       }
 
@@ -391,6 +460,8 @@ const menuToggle = document.querySelector(".menu-toggle");
       context.font = "500 24px Arial, sans-serif";
       context.fillText("Avec l’Apôtre Germain Ndeke", 540, 1260);
 
+      const submitButton = engagementForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
       try {
         const imageBlob = await new Promise((resolve) => engagementCanvas.toBlob(resolve, "image/png"));
         if (!imageBlob) throw new Error("Impossible de générer l’image.");
@@ -409,19 +480,22 @@ const menuToggle = document.querySelector(".menu-toggle");
               firstName,
               lastName,
               phone,
-              timeZone: timeZoneField.value.trim(),
-              location,
+              timeZone: detectedTimeZone,
+              assemblyId,
               duration,
               consent: formData.get("consent") === "true",
             }),
           });
           engagementStatus.textContent = "Carte enregistrée. Téléchargez-la puis joignez-la à votre message WhatsApp si vous le souhaitez.";
-          await Promise.all([loadPublicStats(), refreshCheckins(), restoreParticipantForm()]);
+          await Promise.all([loadPublicStats(), refreshCheckins(), restoreParticipantForm(true)]);
         } catch (error) {
           engagementStatus.textContent = `Visuel créé sur cet appareil, mais engagement non enregistré sur le serveur : ${error.message}`;
         }
       } catch (error) {
-        engagementStatus.textContent = `Impossible de créer le visuel : ${error.message}`;
+        console.error("Le visuel d’engagement n’a pas pu être créé.", error);
+        engagementStatus.textContent = "Impossible de créer le visuel. Réessayez ou utilisez un autre navigateur.";
+      } finally {
+        submitButton.disabled = false;
       }
     });
 
@@ -439,16 +513,18 @@ const menuToggle = document.querySelector(".menu-toggle");
     }
 
     // Le cookie HttpOnly permet de préremplir les champs uniquement dans le navigateur déjà reconnu.
-    async function restoreParticipantForm() {
+    async function restoreParticipantForm(reportFailure = false) {
       try {
         const session = await requestApi("/api/me");
         if (!session.authenticated) return;
         document.querySelector("#participant-first-name").value = session.participant.firstName;
         document.querySelector("#participant-last-name").value = session.participant.lastName;
         document.querySelector("#participant-phone").value = session.participant.phone;
-        timeZoneField.value = session.participant.timeZone || timeZoneField.value;
-      } catch {
-        engagementStatus.textContent = "Le serveur n’est pas connecté : le visuel restera local et ne sera pas enregistré.";
+      } catch (error) {
+        console.error("Le compte participant n’a pas pu être actualisé.", error);
+        if (reportFailure) {
+          engagementStatus.textContent = "Carte enregistrée, mais le formulaire n’a pas pu être actualisé. Rechargez la page pour réessayer.";
+        }
       }
     }
 
@@ -492,7 +568,8 @@ const menuToggle = document.querySelector(".menu-toggle");
         checkedDays = parsedDays.map((isChecked, index) => isChecked && isCheckinDayAvailable(index));
       }
     } catch (error) {
-      checkinStatus.textContent = `Le suivi local n’a pas pu être lu : ${error.message}`;
+      console.error("Le suivi local n’a pas pu être lu.", error);
+      checkinStatus.textContent = "Le suivi local est indisponible sur cet appareil.";
     }
 
     const checkinDateFormat = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" });
@@ -524,7 +601,8 @@ const menuToggle = document.querySelector(".menu-toggle");
         try {
           localStorage.setItem(checkinStorageKey, JSON.stringify(checkedDays));
         } catch (error) {
-          checkinStatus.textContent = `Le cache local n’a pas pu être actualisé : ${error.message}`;
+          console.error("Le suivi local n’a pas pu être actualisé.", error);
+          checkinStatus.textContent = "Le suivi local ne peut pas être actualisé sur cet appareil.";
         }
 
         if (hasParticipantSession) {
@@ -582,7 +660,8 @@ const menuToggle = document.querySelector(".menu-toggle");
         try {
           localStorage.setItem(checkinStorageKey, JSON.stringify(checkedDays));
         } catch (error) {
-          checkinStatus.textContent = `Suivi synchronisé, mais cache local indisponible : ${error.message}`;
+          console.error("Le suivi synchronisé n’a pas pu être conservé localement.", error);
+          checkinStatus.textContent = "Suivi synchronisé, mais indisponible hors connexion sur cet appareil.";
         }
       } catch (error) {
         checkinStatus.textContent = `Suivi limité à ce navigateur ; synchronisation indisponible : ${error.message}`;
